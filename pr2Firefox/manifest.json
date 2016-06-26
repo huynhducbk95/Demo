@@ -1,0 +1,59 @@
+{
+	"name": "E2EE",
+	"description": "Safe Email",
+	"version": "2.0",
+	"permissions": [
+		"activeTab",
+		"http://*/*",
+		"https://*/*",
+		"storage",
+		"tabs",
+		"contextMenus"
+	],
+	"browser_action": {
+		"default_title": "E2EE",
+		"default_popup": "/src/popup.html"
+	},
+	"applications":{
+		"gecko": {
+			"id": "123@gmail.com",
+			"strict_min_version": "45.0.0"
+		}
+	},
+	"manifest_version": 2,
+	"content_scripts": [
+		{
+			"matches": ["http://*/*", "https://*/*"],
+			"js": [
+				"/src/consts-and-funcs.js",
+				"/res/jquery.min.js", 
+				"/cryptico/jsbn.js",
+				"/cryptico/random.js",
+				"/cryptico/hash.js",
+				"/cryptico/rsa.js",
+				"/cryptico/aes.js",
+				"/cryptico/api.js",
+				"/crypto-js/build/rollups/md5.js",
+				"/crypto-js/build/rollups/aes.js",
+				"/crypto-js/build/components/enc-base64-min.js",
+				"/src/content-scripts.js"
+			],
+			"css": ["/src/content-css.css"]
+		}
+	],
+	"background": {
+		"scripts": [
+			"/res/jquery.min.js",
+			"/cryptico/jsbn.js",
+			"/cryptico/random.js",
+			"/cryptico/hash.js",
+			"/cryptico/rsa.js",
+			"/cryptico/aes.js",
+			"/cryptico/api.js",
+			"/crypto-js/build/rollups/md5.js",
+			"/crypto-js/build/rollups/aes.js",
+			"/crypto-js/build/components/enc-base64-min.js",
+			"/src/consts-and-funcs.js",
+			"/src/background.js"]
+	}
+}

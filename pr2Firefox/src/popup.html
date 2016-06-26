@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>IT4010</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="/res/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="/res/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="/res/bootstrap.min.js"></script>
+
+	<!-- Cryptico Library -->
+	<script language="JavaScript" type="text/javascript" src="/cryptico/jsbn.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/random.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/hash.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/rsa.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/aes.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/api.js"></script>
+	
+	<!-- Crypto-js Library -->
+	<script src="/crypto-js/build/rollups/md5.js"></script>
+	<script src="/crypto-js/build/rollups/aes.js"></script>
+	<script src="/crypto-js/build/components/enc-base64-min.js"></script>
+
+	<script src="/src/consts-and-funcs.js"></script>
+	<link rel="stylesheet" href="/src/popup.css">
+</head>
+<body>
+	<div role="tabpanel">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active">
+				<a href="#home" aria-controls="home" role="tab" data-toggle="tab">Login</a>
+			</li>
+			<li role="presentation">
+				<a href="#tab" aria-controls="tab" role="tab" data-toggle="tab">Register</a>
+			</li>
+		</ul>
+	
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="home">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="form-group">
+							<label for="email">Email:</label>
+							<input type="text" class="" id="email">
+						</div>
+						<div class="form-group">
+							<label for="password">Password:</label>
+							<input type="text" class="" id="password">
+						</div>
+						<div class="form-gourp">
+							<button class="btn btn-primary" id="btnLogIn">Login</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="tab">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="form-group">
+							<label for="reg-email">Email:</label>
+							<input type="text" class="" id="reg-email">
+						</div>
+						<div class="form-group">
+							<label for="reg-password">Password:</label>
+							<input type="text" class="" id="reg-password">
+						</div>
+						<div class="form-group">
+							<label for="reg-password">Repeat Password:</label>
+							<input type="text" class="" id="reg-password-repeat">
+						</div>
+						<div class="form-gourp">
+							<button class="btn btn-info" id="btnReg">Register</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- dany santos -->
+	<!--<div class="cont_principal">
+
+		<div class="cont_centrar">
+		<div class="cont_login">
+			<form action="">
+			<div class="cont_tabs_login">
+				<ul class='ul_tabs'>
+					<li class="active"><a href="#" onclick="sign_in()">SIGN IN</a>
+					<span class="linea_bajo_nom"></span>
+					</li>
+					<li><a href="#up" onclick="sign_up()">SIGN UP</a><span class="linea_bajo_nom"></span>
+					</li>
+				</ul>
+				</div>
+		<div class="cont_text_inputs">
+				<input type="text" class="input_form_sign " placeholder="NAME" name="name_us" />
+			
+			<input type="text" class="input_form_sign d_block active_inp" placeholder="EMAIL" name="emauil_us" />
+
+			<input type="password" class="input_form_sign d_block  active_inp" placeholder="PASSWORD" name="pass_us" />  
+		 <input type="password" class="input_form_sign" placeholder="CONFIRM PASSWORD" name="conf_pass_us" />
+			
+			<a href="#" class="link_forgot_pass d_block" >Forgot Password ?</a>    
+	<div class="terms_and_cons d_none">
+			<p><input type="checkbox" name="terms_and_cons" /> <label for="terms_and_cons">Accept  Terms and Conditions.</label></p>
+		
+			</div>
+				</div>
+	<div class="cont_btn">
+			 <button class="btn_sign">SIGN IN</button>
+				
+				</div>
+				
+			</form>
+			</div>
+			
+		</div>
+		
+
+	</div>-->
+	<!-- end -->
+
+	<!-- popup script -->
+	<script src="/src/popup.js"></script>
+</body>
+</html>

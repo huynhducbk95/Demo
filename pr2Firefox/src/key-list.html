@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>E2EE - IT4010</title>
+	<link rel="stylesheet" href="/res/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/res/key-list.css">
+	<script src="/res/jquery.js"></script>
+	<script src="/res/bootstrap.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/jsbn.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/random.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/hash.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/rsa.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/aes.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/api.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/crypto-js/build/rollups/md5.js"></script>
+	<script src="/crypto-js/build/rollups/aes.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/crypto-js/build/components/enc-base64-min.js"></script>
+	<script src="/res/FileSaver.js">/* note cannot run in web worker */</script>
+	<script src="/src/consts-and-funcs.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/src/key-list.html">IT4010</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="#">About</a></li>
+				</ul>
+			</div><!-- /.navbar-collapse -->
+		</div>
+	</nav>
+	<div class="col-md-12 side">
+		<div class="col-md-2">
+			<p></p>
+		</div>
+		<div class="container col-md-8 content">
+			<div class="form-group">
+				<h2>Key Management</h2>
+				<ul id="ulKeys" class="list-group"></ul>
+			</div>
+			<h2>Setup</h2>
+			<ul class="list-group">
+				<li class="list-group-item">
+					<h3>Import public key</h3>
+					<h4>Import someone's Public Key to email him in a safe way.</h4>
+					<a class="btn btn-primary" data-toggle="modal" href='#modal-import-public-key'>Import Public Key</a>
+				</li>
+				<li class="list-group-item">
+					<h3>Import key pair</h3>
+					<h4>You already have a keypair on another device? You can import your existing keys. Just export the keypair on your other device and import it here.</h4>
+					<a class="btn btn-primary" data-toggle="modal" href='#modal-import-key-pair'>Import Key Pair</a>
+				</li>
+				<li class="list-group-item">
+					<h3>Generate key</h3>
+					<h4>If you're using this extension for the first time and you don't have a keypair yet, you need to generate a key.</h4>
+					<a href="generate-rsa-key.html" class="btn btn-success">Generate new key pair</a>
+					</li>
+			</ul>
+		</div>
+	</div>
+	<div class="modal fade" id="modal-import-public-key">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Import Public Key</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<textarea name="pub" id="pub" cols="30" rows="10" class="form-control" placeholder="Paste Public key here."></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btnImportPublicKey">Save Public Key</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-import-key-pair">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Import Key Pair</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="form-group">
+							<textarea name="priv" id="priv" cols="30" rows="10" class="form-control" placeholder="Paste Private key here."></textarea>
+						</div>
+						<div class="form-group">
+							<textarea name="passphrase" id="passphrase" cols="30" rows="3" class="form-control" placeholder="Enter passphrase of this private key."></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btnImportKeyPair">Save Key Pair</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-show-key">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="email">Show key</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="form-group">
+							<textarea name="pubKey" id="pubKey" cols="30" rows="10"class="form-control" ></textarea>
+						</div>
+						<div class="form-group">
+							<textarea name="privKey" id="privKey" cols="30" rows="10" class="form-control" placeholder="Private Key"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" id="btnShowPrivateKey" class="btn btn-primary">Show Private Key</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class = "col-md-12">
+		<center style="padding-top: 15px;" >&copy; 2015-2016</center>
+	</footer>
+	<script src="key-list.js"></script>
+</body>
+</html>

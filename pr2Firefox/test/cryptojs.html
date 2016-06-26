@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Crypto Decrypt</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="/res/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="/res/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="/res/bootstrap.min.js"></script>
+
+	<!-- Cryptico Library -->
+	<script language="JavaScript" type="text/javascript" src="/cryptico/jsbn.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/random.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/hash.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/rsa.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/aes.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/cryptico/api.js"></script>
+	
+	<!-- Crypto-js Library -->
+	<script src="/crypto-js/build/rollups/md5.js"></script>
+	<script src="/crypto-js/build/rollups/aes.js"></script>
+	<script src="/crypto-js/build/components/enc-base64-min.js"></script>
+
+	<!-- https://github.com/eligrey/FileSaver.js - used to save decrypted attachments-->
+	<script src="/res/FileSaver.js"></script>
+	<script src="/src/consts-and-funcs.js"></script>
+</head>
+<body>
+	<div class="container">
+			<div class="form-group">
+				<textarea type="text" id="text" class="form-control" placeholder="Text"></textarea>
+			</div>
+			<div class="form-group">
+				<input type="text" id="key" class="form-control" placeholder="Key"/>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-success" id="btnEncrypt" >Encrypt</button>
+			</div>
+			<div class="form-group">
+				<textarea id="encrypted" class="form-control"></textarea>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-success" id="btnDecrypt" >Decrypt</button>
+			</div>
+			<div class="form-group">
+				<textarea type="text" id="decrypted" class="form-control"></textarea>
+			</div>
+			<div class="form-group">
+				<input type="file" name="attach" id="attach" multiple>
+				<textarea name="file-info" id="file-info" cols="30" rows="10"></textarea>
+				<button class="btn btn-info" id="btnEncryptFile">Encrypt File</button>
+				<button class="btn btn-info" id="btnDecryptFile">Decrypt File</button>
+				<button class="btn btn-info" id="btnTransfer">Transfer</button>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-info" id="btnOptions">Options</button>
+			</div>
+			<script src="cryptojs.js"></script>
+	</div>
+</body>
+</html>
