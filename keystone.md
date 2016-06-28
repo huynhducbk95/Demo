@@ -69,3 +69,10 @@
 &emsp;Ví dụ:</br>
 -	Một người có thể thuộc nhiều project và có các quyền khác nhau.</br>
 -	“Alice” có quyền admin trong project “abc” nhưng chỉ có quyền user trong project “xyz”</br>
+<h3><a name="khaiNiem_domain">1.1.2.	 Domain</a></h3></br>
+&emsp; Trong giao đoạn đầu của OpenStack, không có cơ chế để hạn chế tầm nhìn của các project trong các tổ chức người dùng khác nhau. Điều này dẫn đến nhưng va chạm về tên Project của các tổ chức khác nhau. Tên user cũng có tầm nhìn tổng thể nên cũng có thể dẫn đến những va chạm không mong muốn khi 2 tổ chức đều có chung một tên user. Keystone đã đưa ra khái niệm là Domain.</br>
+&emsp; Domain cung cấp khả năng để cô lập tầm nhìn của một tập các Project và user (và group) trong một tổ chức cụ thể. Một Domain được định nghĩa như là một tập hợp bao gồm các user, các group và các project.</br>
+<h3><a name="khaiNiem_user_group">1.1.3.	 User và User Group (Actor)</a></h3></br>
+&emsp;Trong Keystone, user và user group là các thực thể được cấp quyền truy cập đến các tài nguyên trong các project. Group là một tập hợp của nhiều user. User là đại diện cho một người, hay một dịch vụ sử dụng các dịch vụ OpenStack và được chứa trong một Domain cụ thể.</br>
+&emsp;Mối quan hệ của Domain, project, user và group được thể hiện trong hình sau:</br>
+<img src="image/relationship"/><br><br>
