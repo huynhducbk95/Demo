@@ -4,12 +4,12 @@
 <ul>
 <li><a href="#tq_khaiNiem">1.1. Các khái niệm</a>
 <ul>
-  <li><a href="#tq_project">1.1.1.	Project</a></li>
-  <li><a href="#tq_domain">1.1.2.	Domain</a></li>
-  <li><a href="#tq_user_group">1.1.3.	User và User Group (Actor)</a></li>
-  <li><a href="#tq_role">1.1.4.	Role</a></li>
-  <li><a href="#tq_token">1.1.5.	Token</a></li>
-  <li><a href="#tq_catalog">1.1.6.	Catalog</a></li>
+  <li><a href="#khaiNiem_project">1.1.1.	Project</a></li>
+  <li><a href="#khaiNiem_domain">1.1.2.	Domain</a></li>
+  <li><a href="#khaiNiem_user_group">1.1.3.	User và User Group (Actor)</a></li>
+  <li><a href="#khaiNiem_role">1.1.4.	Role</a></li>
+  <li><a href="#khaiNiem_token">1.1.5.	Token</a></li>
+  <li><a href="#khaiNiem_catalog">1.1.6.	Catalog</a></li>
 </ul>
 </li>
 <li><a href="#tq_identity">1.2.	Identity</a>
@@ -53,7 +53,19 @@
 <b>các tính năng của Keystone</b></br>
 &emsp;Trong khi Keystone tập trung hầu hết vào cung cấp các dịch vụ Identity, Authentication và Access Management, nó cũng hỗ trợ một số tính năng khác cho môi trường OpenStack:</br>
 <ul>
-<li></li>
-<li></li>
+<li>Xác thực đơn và cấp quyền cho các dịch vụ khác của OpenStack</li>
+<li>Xử lý các hệ thống xác thực ngoài và cô lập tất cả các dịch vụ trong OpenStack</li>
+<li>Keystone cung cấp các Project giúp các dịch vụ khác của OpenStack có thể sử dụng để phân biệt các tài nguyên (ví dụ như các máy chủ, các image,…).</li>
+<li>Keystone cung cấp các Domain được sử dụng để định nghĩa name-space của các user, group và project để cho phép phân biệt giữa các người dùng</li>
+<li>Cung cấp việc đăng ký các Roles được sử dụng cho việc cấp phép giữa Keystone và file policy của mỗi dịch vụ OpenStack</li>
+<li>Cung cấp một catalog lưu trữ các dịch vụ OpenStack, endpoint và region, cho phép client có thể tìm kiếm các dịch vụ hoặc các endpoint mà họ cần.</li>
 </ul>
-
+<h3><a name="tq_khaiNiem">1.1.	Các khái niệm </a></h3></br>
+&emsp;Để có thể tìm hiểu Keystone, trước tiên cần phải hiểu các khái niệm được sử dụng trong Keystone.</br>
+<h3><a name="khaiNiem_project">1.1.1.	 Project </a></h3></br>
+&emsp;Trong Keystone, Project là khái niệm trừu tượng được sử dụng bởi các dịch vụ OpenStack để nhóm và phân biệt các tài nguyên (vd: các server, các image,…)</br>
+&emsp;Trước đây, các Project Keystone sử dụng khái niệm “tenant”, nhưng do trực quan hơn nên đã đổi sang “Project”. Khái niệm này phù hợp hơn để nói về mục tiêu cơ bản nhất của Keystone là cung cấp các project và trình bày ai là được phép truy cập đến các project này.</br>
+&emsp;Người dùng và nhóm người dùng nhận quyền truy cập đến một project sử dụng một khái niệm là Role Assignment (phân công). Một Role được gán cho một user hoặc user group trong một Project cho biết user hoặc user group có một số quyền truy cập đến các tài nguyên trong Project.</br>
+&emsp;Ví dụ:</br>
+-	Một người có thể thuộc nhiều project và có các quyền khác nhau.</br>
+-	“Alice” có quyền admin trong project “abc” nhưng chỉ có quyền user trong project “xyz”</br>
