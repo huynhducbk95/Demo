@@ -2,8 +2,8 @@
 <h1>Mục lục</h1>
 
 <h4><a href="#tong_quan">1.	Giới thiệu tổng quan</a></h4>
-<ul>
-<li><a href="#tq_khaiNiem">1.1. Các khái niệm</a>
+
+<a href="#tq_khaiNiem">1.1. Các khái niệm</a>
 <ul>
   <li><a href="#khaiNiem_project">1.1.1.	Project</a></li>
   <li><a href="#khaiNiem_domain">1.1.2.	Domain</a></li>
@@ -12,8 +12,8 @@
   <li><a href="#khaiNiem_token">1.1.5.	Token</a></li>
   <li><a href="#khaiNiem_catalog">1.1.6.	Catalog</a></li>
 </ul>
-</li>
-<li><a href="#tq_identity">1.2.	Identity</a>
+
+<a href="#tq_identity">1.2.	Identity</a>
 <ul>
   <li><a href="#iden_sql">1.2.1.	SQL</a></li>
   <li><a href="#iden_ldap">1.2.2.	LDAP</a></li>
@@ -21,23 +21,23 @@
   <li><a href="#iden_provider">1.2.4.	Identity Provider</a></li>
   <li><a href="#iden_usecase_backend">1.2.5.	Các trường hợp sử dụng các Identity backend</a></li>
 </ul>
-</li>
-<li><a href="#tq_Authentication">1.3.	Authentication</a>
+
+<a href="#tq_Authentication">1.3.	Authentication</a>
 <ul>
   <li><a href="#authen_pass">1.3.1.	Password</a></li>
   <li><a href="#authen_token">1.3.2.	Token</a></li>
 </ul>
-</li>
-<li><a href="#tq_author">1.4.	Access Management và Authorization</a></li>
-<li><a href="#tq_format">1.5.	Các định dạng Token</a>
+
+<a href="#tq_author">1.4.	Access Management và Authorization</a>
+<a href="#tq_format">1.5.	Các định dạng Token</a>
 <ul>
   <li><a href="#format_uuid">1.5.1.	UUID	</a></li>
   <li><a href="#format_pki">1.5.2.	PKI – PKIZ</a></li>
   <li><a href="#format_fernet">1.5.3.	Fernet</a></li>
 </ul>
-</li>
-<li><a href="#tq_activity">1.6.	Hoạt động của Keystone</a></li>
-</ul>
+
+<a href="#tq_activity">1.6.	Hoạt động của Keystone</a>
+
 <h4><a href="#install_config">2.	Cấu hình và cài đặt Keystone</a></h4>
 ----
 
@@ -62,7 +62,7 @@
 <li>Cung cấp một catalog lưu trữ các dịch vụ OpenStack, endpoint và region, cho phép client có thể tìm kiếm các dịch vụ hoặc các endpoint mà họ cần.</li>
 </ul>
 <h3><a name="tq_khaiNiem">1.1.	Các khái niệm </a></h3></br>
-&emsp;Để có thể tìm hiểu Keystone, trước tiên cần phải hiểu các khái niệm được sử dụng trong Keystone.</br>
+Để có thể tìm hiểu Keystone, trước tiên cần phải hiểu các khái niệm được sử dụng trong Keystone.</br>
 <h3><a name="khaiNiem_project">1.1.1.	 Project </a></h3></br>
 &emsp;Trong Keystone, Project là khái niệm trừu tượng được sử dụng bởi các dịch vụ OpenStack để nhóm và phân biệt các tài nguyên (vd: các server, các image,…)</br>
 &emsp;Trước đây, các Project Keystone sử dụng khái niệm “tenant”, nhưng do trực quan hơn nên đã đổi sang “Project”. Khái niệm này phù hợp hơn để nói về mục tiêu cơ bản nhất của Keystone là cung cấp các project và trình bày ai là được phép truy cập đến các project này.</br>
