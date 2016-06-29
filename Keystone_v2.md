@@ -362,6 +362,7 @@ Multiple Data Center
 </ol>
 
 <h2><a name="install_config">2.	Cấu hình và cài đặt Keystone</a></h2>
+---
 - Trước tiên, cần phải tạo ra một database cho Keystone bằng các câu lệnh sau:</br>
 ```sh
 mysql -u root –pWelcome123
