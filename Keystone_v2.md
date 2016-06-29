@@ -360,6 +360,12 @@
     <li>Nova thực hiện tiếp quá trình và gửi phản hồi lại cho user </li>
 </ol>
 
+```sh
+  [database]
+  ...
+  connection = mysql+pymysql://keystone:Welcome123@controller/keystone
+  ```
+
 <h2><a name="install_config">2.	Cấu hình và cài đặt Keystone</a></h2>
 - Trước tiên, cần phải tạo ra một database cho dịch vụ keystone bằng các câu lệnh sau:
 ```sh
