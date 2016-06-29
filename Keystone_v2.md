@@ -362,7 +362,7 @@
 
 <a name="install_config"></a>
 #### 2.	Cấu hình và cài đặt Keystone
-- Trước tiên, cần phải tạo ra một database cho Keystone bằng các câu lệnh sau:</br>
+- Trước tiên, cần phải tạo ra một database cho Keystone bằng các câu lệnh sau:
 ```sh
 mysql -u root –pWelcome123
 CREATE DATABASE keystone;
