@@ -360,8 +360,7 @@
     <li>Nova thực hiện tiếp quá trình và gửi phản hồi lại cho user </li>
 </ol>
 
-<a name="install_config"></a>
-#### 2.	Cấu hình và cài đặt Keystone
+<h2><a name="install_config">2.	Cấu hình và cài đặt Keystone</a></h2>
 - Trước tiên, cần phải tạo ra một database cho Keystone bằng các câu lệnh sau:
 ```sh
 mysql -u root –pWelcome123
@@ -385,23 +384,23 @@ apt-get install keystone apache2 libapache2-mod-wsgi
 ```
 - Cấu hinh file ` /etc/keystone/keystone.conf `với các yêu cầu sau:
   - Trong phần ` [default] `, định nghĩa giá trị của thẻ quản trị ban đầu:
-  ```sh
+```sh
   [DEFAULT]
   ...
   admin_token = ADMIN_TOKEN
-  ```
+```
   - Trong phần ` [database] `, cấu hình truy cập đến database:
-  ```sh
+```sh
   [database]
   ...
   connection = mysql+pymysql://keystone:Welcome123@controller/keystone
-  ```
+```
   - Trong phần ` [token] `, cấu hình nhà cung cấp thẻ Fernet:
-  ```sh
+```sh
   [token]
   ...
   provider = fernet
-  ```
+```
 - Đồng bộ database dịch vụ xác thực:
 ```sh
 su -s /bin/sh -c "keystone-manage db_sync" keystone
@@ -481,20 +480,20 @@ openstack service create \
 - Keystone cũng quản lý một danh mục các endpoint API được kết nối với các dịch vụ trong môi trường OpenStack . Các dịch vụ sử dụng catalog này để xác định các giao tiếp với các dịch vụ khác trong môi trường OpenStack.
 - Tạo các endpoints API: 
   - Public API endpoint:
-  ```sh  
+```sh  
   openstack endpoint create --region RegionOne \
     identity public http://controller:5000/v3
-  ```
+```
   - Internal API endpoint:
-  ```sh
+```sh
   openstack endpoint create --region RegionOne \
     identity internal http://controller:5000/v3
-  ```
+```
   - Admin API endpoint:
-  ```sh
+```sh
     openstack endpoint create --region RegionOne \
       identity admin http://controller:5000/v3
-  ```
+```
 <h3>Tạo domain, user, project và role</h3></br>
 - Tạo domain “default”:
 ```sh
@@ -523,10 +522,10 @@ openstack role add --project admin --user admin admin
 - Gỡ bỏ các biến môi trường đã thiết lập trong quá trình tạo service và endpoint cho dịch vụ Identity.
 - Kiểm tra hoạt động bằng cách yêu cầu token cho user “admin” đã tạo ở trên:
 ```sh
-openstack --os-auth-url http://controller:35357/v3 \
-  --os-project-domain-name default --os-user-domain-name default \
-  --os-project-name admin --os-username admin token issue
-Password:
+  openstack --os-auth-url http://controller:35357/v3 \
+   --os-project-domain-name default --os-user-domain-name default \
+   --os-project-name admin --os-username admin token issue
+  Password:
 ```
   Nhập password vào và hiển thị kết quả như sau:
 ```sh
