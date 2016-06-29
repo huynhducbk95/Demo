@@ -343,7 +343,7 @@ Multiple Data Center
         </ul>
     </li>
 </ul>
-<h3><a name="#tq_activity">1.6.	Hoạt động của Keystone</a></h3></br>
+<h3><a name="tq_activity">1.6.	Hoạt động của Keystone</a></h3></br>
 &emsp;Biểu đồ tuẩn tự dưới đây sẽ mô tả quá trình hoạt động của Keystone trong ví dụ cụ thể là tạo một máy ảo VM.</br>
 <img src="image/keystone_process_flow.png"/><br><br>
 &emsp;Cụ thể các bước như sau :</br>
