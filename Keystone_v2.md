@@ -322,7 +322,6 @@
 </ol>
 <b>Token Validation Workflow</b></br>
 &emsp;Tương tự UUID và PKI/ PKIZ </br>
-Multiple Data Center
 <b>Multiple Data Center</b></br>
 <img src="image/fernet-multiple_data_center.png"/><br><br>
 &emsp;Giả sử triển khai hệ thống cloud với keystone ở cả hai bên US-WEST và US-EAST. Cả hai bên này đều có LDAP và Database luôn luôn được đồng bộ. Hoạt động của keystone khi user muốn thực hiện tạo một máy ảo VM như sau:</br>
@@ -361,8 +360,8 @@ Multiple Data Center
     <li>Nova thực hiện tiếp quá trình và gửi phản hồi lại cho user </li>
 </ol>
 
-<h2><a name="install_config">2.	Cấu hình và cài đặt Keystone</a></h2>
----
+<a name="install_config"></a>
+##2.	Cấu hình và cài đặt Keystone
 - Trước tiên, cần phải tạo ra một database cho Keystone bằng các câu lệnh sau:</br>
 ```sh
 mysql -u root –pWelcome123
