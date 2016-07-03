@@ -37,7 +37,7 @@
 </ul>
 
 <a href="#tq_activity">1.6.	Hoạt động của Keystone</a>
-
+<h4><a href="#install_config">2.	Cài đặt và cấu hình Keystone</a></h4>
 ----
 
 <h2><a name="tong_quan">1.	Giới thiệu tổng quan</a></h2>
@@ -358,7 +358,7 @@
     <li>Neutron phản hồi lại cho Nova.</li>
     <li>Nova thực hiện tiếp quá trình và gửi phản hồi lại cho user </li>
 </ol>
-<h1><a name="install_config">Cấu hình và cài đặt Keystone</a></h1>
+<h3><a name="install_config">Cấu hình và cài đặt Keystone</a></h3>
 - Trước tiên, cần phải tạo ra một database cho dịch vụ keystone bằng các câu lệnh sau:
 ```sh
 mysql -u root –pWelcome123
