@@ -1,15 +1,14 @@
 
 # Tài liệu tổng quan về Python 3
-## 1. Tổng quan
+## 1. Định nghĩa
 - Định nghĩa: Python là một ngôn ngữ lập trình bậc cao, thông dịch, hướng đối tượng, đa mục đich và cũng là ngôn ngữ lập trình động
 - Giải thích cho định nghĩa trên: 
 	- Python là ngôn ngữ thông dịch vì nó không phải biên dịch ra phải chạy mà dịch đến đâu thì chạy đến đó. 
 	- Python là ngôn ngữ đa mục đích, tức là python không chỉ sử dụng cho lĩnh vực lập trình web mà còn được sử dụng với web, enterprise, 3D CAD,...
 	- Python là ngôn ngữ lập trình đông, tức là python không cần sử dụng các kiểu dữ liệu để khai báo biến. kiểu của các biến được hiểu tự động. ví dụ : var = 1, thì biến var được hiểu là có kiểu integer
-- Sau đây là một số vấn đề trong quá trình học python mà bản thân mình cho là nên chú ý
 
 ## 2. Điểm mới của Python 3
-<b> __future__ module </b>
+##### __future__ module
 - Các phiên bản Python 3.x cung cấp thêm một số tính năng mới hoặc thay đổi cách hoạt động của một số thành phần so với python 2.x. Vì vậy, để sử dụng các thành phần mới này hay là cách hoạt động mới của các thành phần này trong python 2 cần phải import thông qua module __future__
 - Ví dụ: Để thực hiện phép chia của Python 3 trong python 2, cần phải thực hiện câu lệnh `from __future__ import division` :
 ```sh
@@ -19,8 +18,8 @@ print var
 >> test.py
 1.5
 ```
-- Nếu không sử dụng `from __future__ import division` thì kết quả là `1`
-<b> Print function </b>
+Nếu không sử dụng `from __future__ import division` thì kết quả là `1`
+##### Print function
 - Hàm `print` trong có sự thay đổi khá nhiều trong Python 3. Cụ thể, dấu ngoặc đơn () là bắt buộc trong khi nó có thể không cần trong Python 2
 - Ngoài ra, theo mặc định, thực hiện hàm `print` sẽ tự động xuống dòng. Trong Python 2, để ngăn cản việc xuống dòng thì phải thêm dấu `,` ở cuối lệnh hàm `print`. Còn trong Python 3, thực hiện việc này bằng cách thêm `end=' '` 
 ```sh
@@ -34,7 +33,7 @@ print ("new line")
 #Output: not a new line new line
 ```
 
-<b> Reading input from keyboard </b>
+##### Reading input from keyboard
 - Trong Python 2, có 2 hàm được cung cấp để đọc dữ liệu từ bàn phím là `input()` và `raw_input()`. Đối với hàm `input()`, dữ liệu nhập vào sẽ được xem như là một string nếu dữ liệu được chứa trong dâu `''` hoặc `""`; ngược lại, dữ liệu được xem như là một số. Còn đối với hàm `raw_input()`, mọi dữ liệu nhập vào đều được xem như là một string 
 ```sh
 #in python 2
@@ -62,10 +61,10 @@ abcxyz # it is a string
 10 # it is a string
 ```
 
-<b> integer division </b>
+##### integer division
 - Trong python 2, kết quả của phép chia số nguyên sẽ là phần nguyên của thương số (vd: 5/2 = 2). Để kết quả 5/2 = 2.5 thì phải tồn tại một số float trong phép chia (vd: 5.0/2 =2.5)
 - Trong python 3, Kết quả của phép chia số nguyên sẽ giữ nguyên thương số. vd: 5/2 =2.5; 4/2 = 2
-<b> Unicode representation </b>
+##### Unicode representation 
 - Trong python 2, để hỗ trợ ký tự Unicode thì bắt buộc phải sử dụng câu lệnh khai báo hỗ trợ unicode.
 ```sh
 # -*- coding: utf-8 -*-
@@ -74,10 +73,10 @@ print var
 >> so sánh giữa python 2 và python 3
 ``` 
 - Trong python 3, unicode được mặc định hỗ trợ. Vậy nên, không cần quan tâm đến unicode khi sử dung Python 3
-<b> range and xrange fucntion </b>
+##### range and xrange fucntion 
 - Trong Python 2, hàm range tạo ra một list đối tượng được lưu trữ trong bộ nhớ, còn hàm xrange chỉ tạo ra một đối tượng khi được gọi đến. Rõ ràng, xrange sẽ có lợi về tiết kiệm bộ nhớ hơn so với range
 - Trong Python 3, hàm range bị loại bỏ và hàm xrange được đổi tên thành hàm range
-<b>raise exception</b>
+##### raise exception
 - Trong python 2, tât cả cú pháp của raise exception đều được chấp nhận
 - Trong python 3, chỉ cho phép sử dụng cú pháp có dấu ngoặc ()
 ```sh
@@ -86,8 +85,40 @@ raise IOError("file error") #This is also accepted in Python 2
 raise IOError, "file error" #syntax error is raised in Python 3
 raise IOError("file error") #this is the recommended syntax in Python 3
 ```
-## 5. Iterator
-###5.1. Iterable
+## 3. Object
+- Ở phần này, mình sẽ so sánh hướng đối tượng được sử dụng trong java và python. Cả hai có một số điểm khá là khác nhau
+- Để trình bày các khái niệm cơ bản của hướng đối tượng trong python, mình sẽ sử dụng ví dụ một class sau:
+```sh
+class Student:
+	"Document string for class (optional)"
+	st_count = 0
+
+	def __init__(self,name,fee):
+		self.name = name
+		self.fee = fee
+		st_count += 1
+	def displayCount(self):
+		print ("number of students: ", self.count)
+	def showInfo(self):
+		print ("name: ",self.name," fee: ",fee)
+```
+- Trong python, các biến được khai báo bên ngoài các phương thức và bên trong lớp được gọi là "class variable" (trong ví dụ trên, st_count là class variable). Biến class được chia sẻ cho tất cả các instance của một lớp, có nghĩa là bất cứ một thay đổi nào về giá trị của biến class đều làm thay đổi giá trị của nó trên các instance còn lại của class. Biến class có thể được truy cập ở bất cứ chỗ nào thông qua đối tượng của lớp hoặc tên lớp.
+- Ngoài ra, các biến được khai báo bên trong các phương thức của class được gọi là "instance variable" (trong ví dụ trên, name và fee là 2 biến instance) và các biến này là cụ thể với từng instance của class. Các biến này có thể được truy cập ở bất kỳ chỗ nào thông qua đối tượng. Và chúng ta có thể thêm sửa xóa các biến instance của một instance tùy ý ở bất kỳ đâu
+```sh
+student1 = Student("A", 2100)
+student2 = Student("B", 2200)
+
+#delete variable
+del student1.fee
+#add variable
+student.mark =10
+
+```
+- Một điểm khá khác biệt ở Python đó là một lớp có thể kế thừa được từ nhiều lớp khác. Và đối với việc kế thừa nhiều lớp cha này, nếu 2 lớp cha có phương thức cùng chữ ký thì khi lớp con kế thừa sẽ ưu tiên gọi phương thức của lớp cha đầu tiên nhất trong danh sách kế thừa được định nghĩa.
+- Nếu như trong các ngôn ngữ khác như Java, C++ các thuộc tính được bảo vệ không cho truy cập từ bên ngoài bằng private, protected thì trong python chỉ hỗ trợ private, các thuộc tính muốn ẩn đi thì chỉ cần thêm ký tự `_` trước mỗi tên biến.
+
+## 4. Iterator
+### 4.1. Iterable
 - Iterable là các đối tượng có thể sử dụng vòng lặp `for` để duyệt quá các phần tử. ví dụ: string, dictionary, tuple, list
 ```sh
 # string
@@ -106,7 +137,7 @@ for i in dict_a:
 	print (i)
 ```
 - Hoạt động duyệt qua các phần tử của các đối tượng Iterable được gọi là Iteration
-###5.2. Giao thức Iteration
+### 4.2. Giao thức Iteration
 - Các đối tượng Iterable mặc định được cài đặt sẵn phương thức `__iter__()`. Phương thức `__iter__()` này sẽ trả về một đối tượng iterator. Đối tượng iterator này được hỗ trợ giao thức Iteration.
 - Giao thức Iteration là giao thức được tạo bởi bộ 2 phương thức sau:
 	- Phương thức __iter__() : trả về đối tượng iterator
@@ -195,7 +226,7 @@ print (list(x))
 #Output: [0,1,2]
 ```
 
-## 6. Generator
+## 5. Generator
 - Về cơ bản, generator cũng là iterator, có nghĩa là generator cũng hỗ trợ giao thức iteration. Hàm generator trả về một dãy các kết quả thay vì một như các hàm bình thường
 - Định nghĩa một hàm generator cũng tương tự như định nghĩa hàm thông thường, sử dụng từ khóa `def` để định nghĩa hàm và `yield` để trả về kết quả. 
 - Điểm đặc biệt của generator nằm ở cách hoạt động với từ khóa trả về `yield`: Khi gọi phương thức `__next__()` ban đầu, hàm generator sẽ thực hiện các câu lệnh từ đầu cho đến khi gặp từ khóa trả về `yield` đầu tiên. Ở lần gọi phương thức `__next__()` tiếp theo, thay vì thực hiện lại từ đầu như hàm bình thường, hàm generator sẽ thực hiện tiếp các câu lệnh phía sau từ khóa `yield` trước đó. Cứ tiếp tục như vậy cho đến khi không còn từ khóa `yield` thì sẽ sinh ra `StopIteration` exception.
@@ -227,11 +258,11 @@ print (y.__next__())
 
 ```
 
-## 7. Decorator
+## 6. Decorator
 - Trong lập trình, sẽ có nhiều trường hợp chúng ta tạo muốn thêm các hoạt động, các tính năng cho các hàm đã được định nghĩa trước đó mà không muốn làm thay đổi nội dung của các hàm đó. Trong Python, vần đề này được giải quyết bằng kỹ thuật Decorator
 - Để hiểu được Decorator, trước hết phải hiểu một số khái niệm sau trong Python
-### 7.1. Hàm
-- Ví dụ ta có hàm sau
+### 6.1. Function
+- Ví dụ ta có hàm sau:
 ```sh
 def printInput(x):
 	print (x)
@@ -284,7 +315,7 @@ print (change_input(lower_input)())
 #output: abc
 ```
 - Cuối cùng, tất cả những tính chất trên đều xuất phát từ định nghĩa ** hàm là một đối tượng ** trong python. Vì vậy, định nghĩa này là rất quan trọng để ứng dụng hàm vào các kỹ thuật quan trọng trong python
-###7.2. Decorator
+### 6.2. Decorator
 - Ứng dụng các tính chất của một hàm trong python, người ta xây dựng một kỹ thuật gọi là decorator. Decorator là một hàm được truyền vào tham số là một hàm khác và thêm các tính năng mới cho hàm được truyền vào mà không làm thay đổi nội dung của hàm đó. Một ví dụ cơ bản về hàm decorator,
 ```sh
 def say_hello():
@@ -410,4 +441,4 @@ demoObj.show("hello","world")
 #		 after
 ```
 - Khi decorator một hàm thì hàm đó sẽ được decorate mãi mãi mà không thể bỏ decorator được. Vậy, làm thế nào để sử dụng hàm gốc khi chưa decorator? cách làm đơn giản nhất là truyền cho hàm `wrapper` một biến tham chiếu đến hàm gốc.
-- Tổng kết, Decorator còn rất nhiều kỹ thuật khác như decorator class, decorator tổng quát,... như do giới hạn của tài liệu nên mình chỉ trình bày đến đây. Các kỹ thuật còn lại mình sẽ trình bày ở một tài liệu khác
+- Tổng kết, Decorator còn rất nhiều kỹ thuật khác như decorator class, functools,... như do giới hạn của tài liệu và thời gian tìm hiểu nên mình chỉ trình bày đến đây. Các kỹ thuật còn lại mình sẽ trình bày ở một tài liệu khác
