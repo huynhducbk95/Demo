@@ -9,7 +9,7 @@
 - Sau đây là một số vấn đề trong quá trình học python mà bản thân mình cho là nên chú ý
 
 ## 2. Điểm mới của Python 3
-** __future__ module **
+<b> __future__ module </b>
 - Các phiên bản Python 3.x cung cấp thêm một số tính năng mới hoặc thay đổi cách hoạt động của một số thành phần so với python 2.x. Vì vậy, để sử dụng các thành phần mới này hay là cách hoạt động mới của các thành phần này trong python 2 cần phải import thông qua module __future__
 - Ví dụ: Để thực hiện phép chia của Python 3 trong python 2, cần phải thực hiện câu lệnh `from __future__ import division` :
 ```sh
@@ -19,8 +19,8 @@ print var
 >> test.py
 1.5
 ```
-Nếu không sử dụng `from __future__ import division` thì kết quả là `1`
-** print function **
+- Nếu không sử dụng `from __future__ import division` thì kết quả là `1`
+<b> Print function </b>
 - Hàm `print` trong có sự thay đổi khá nhiều trong Python 3. Cụ thể, dấu ngoặc đơn () là bắt buộc trong khi nó có thể không cần trong Python 2
 - Ngoài ra, theo mặc định, thực hiện hàm `print` sẽ tự động xuống dòng. Trong Python 2, để ngăn cản việc xuống dòng thì phải thêm dấu `,` ở cuối lệnh hàm `print`. Còn trong Python 3, thực hiện việc này bằng cách thêm `end=' '` 
 ```sh
@@ -34,7 +34,7 @@ print ("new line")
 #Output: not a new line new line
 ```
 
-** Reading input from keyboard **
+<b> Reading input from keyboard </b>
 - Trong Python 2, có 2 hàm được cung cấp để đọc dữ liệu từ bàn phím là `input()` và `raw_input()`. Đối với hàm `input()`, dữ liệu nhập vào sẽ được xem như là một string nếu dữ liệu được chứa trong dâu `''` hoặc `""`; ngược lại, dữ liệu được xem như là một số. Còn đối với hàm `raw_input()`, mọi dữ liệu nhập vào đều được xem như là một string 
 ```sh
 #in python 2
@@ -62,10 +62,10 @@ abcxyz # it is a string
 10 # it is a string
 ```
 
-** integer division **
+<b> integer division </b>
 - Trong python 2, kết quả của phép chia số nguyên sẽ là phần nguyên của thương số (vd: 5/2 = 2). Để kết quả 5/2 = 2.5 thì phải tồn tại một số float trong phép chia (vd: 5.0/2 =2.5)
 - Trong python 3, Kết quả của phép chia số nguyên sẽ giữ nguyên thương số. vd: 5/2 =2.5; 4/2 = 2
-** Unicode representation **
+<b> Unicode representation </b>
 - Trong python 2, để hỗ trợ ký tự Unicode thì bắt buộc phải sử dụng câu lệnh khai báo hỗ trợ unicode.
 ```sh
 # -*- coding: utf-8 -*-
@@ -74,15 +74,18 @@ print var
 >> so sánh giữa python 2 và python 3
 ``` 
 - Trong python 3, unicode được mặc định hỗ trợ. Vậy nên, không cần quan tâm đến unicode khi sử dung Python 3
-** 
-
-## 3. Built-in functions
-- Trong Python tồn tại 2 loại hàm:
-	- Hàm built-in: là các hàm được hỗ trợ bởi 
-## 4. Object Oriented
-- Python là ngôn ngữ hướng đối tượng, với các khái niệm chính sau:
-	- `Class`: 
-
+<b> range and xrange fucntion </b>
+- Trong Python 2, hàm range tạo ra một list đối tượng được lưu trữ trong bộ nhớ, còn hàm xrange chỉ tạo ra một đối tượng khi được gọi đến. Rõ ràng, xrange sẽ có lợi về tiết kiệm bộ nhớ hơn so với range
+- Trong Python 3, hàm range bị loại bỏ và hàm xrange được đổi tên thành hàm range
+<b>raise exception</b>
+- Trong python 2, tât cả cú pháp của raise exception đều được chấp nhận
+- Trong python 3, chỉ cho phép sử dụng cú pháp có dấu ngoặc ()
+```sh
+raise IOError, "file error" #This is accepted in Python 2
+raise IOError("file error") #This is also accepted in Python 2
+raise IOError, "file error" #syntax error is raised in Python 3
+raise IOError("file error") #this is the recommended syntax in Python 3
+```
 ## 5. Iterator
 ###5.1. Iterable
 - Iterable là các đối tượng có thể sử dụng vòng lặp `for` để duyệt quá các phần tử. ví dụ: string, dictionary, tuple, list
@@ -368,3 +371,43 @@ a()
 #		 after func to decorate 1
 #		 after func to decorate 2
 ```
+- Trong các ví dụ trên, các hàm được decorate có đặc điểm là không có tham số truyền vào. Vậy, câu hỏi đặt ra là: Đối với các hàm có tham số truyền vào thì decorate chúng như thế nào? Và tham số đó được truyền vào như thế nào?
+- Về bản chất, khi gọi một hàm decorator thì kết quả trả về là một hàm `wrapper`. Hàm `wrapper` này thực hiện các chức năng trước, sau hàm được decorate và gọi đến hàm được decorate. Vì vậy, nếu muốn truyền tham số cho hàm được decorate thì đơn giản là chúng ta định nghĩa hàm `wrapper` này có tham số truyền vào là các tham số của hàm được decorate hoặc là nhiều hơn nếu muốn.
+```sh
+def func_decorator(func_to_decorate):
+	def wrapper_func( var1 , var2 , var3):
+		print("before: ",var3)
+		func_to_decorate(var1,var2)
+		print("after: ",var3)
+	return wrapper_func
+@func_decorator
+def say_hello(x,y):
+	print (x,y)
+a = say_hello
+a("I'am python","hello world", "wrapper argument")
+#output: before:  wrapper argument
+# 		 I'am python   hello world
+#		 after:  wrapper argument
+```
+- Bên cạnh việc sử dụng decorator để decorate các hàm thì chúng ta cũng có thể sử dụng các hàm decorator để thêm tính năng mới cho các phương thức của một class. Việc làm này cũng tương tự với decorator một hàm thông thường, chỉ khác ở chỗ tham số truyền vào của hàm `wrapper` có thêm tham số `self`.
+```sh
+def func_decorator(func_to_decorate):
+	def wrapper_func(self,var1, var2)
+		print("before")
+		func_to_decorate(self,var1,var2)
+		print("after")
+	return wrapper_func
+class Demo:
+	def __init__(self,name):
+		self.name = name
+	@func_decorator
+	def show(var1, var2):
+		print (var1,var2)
+demoObj = Demo("test")
+demoObj.show("hello","world")
+#output: before
+#		 hello world
+#		 after
+```
+- Khi decorator một hàm thì hàm đó sẽ được decorate mãi mãi mà không thể bỏ decorator được. Vậy, làm thế nào để sử dụng hàm gốc khi chưa decorator? cách làm đơn giản nhất là truyền cho hàm `wrapper` một biến tham chiếu đến hàm gốc.
+- Tổng kết, Decorator còn rất nhiều kỹ thuật khác như decorator class, decorator tổng quát,... như do giới hạn của tài liệu nên mình chỉ trình bày đến đây. Các kỹ thuật còn lại mình sẽ trình bày ở một tài liệu khác
