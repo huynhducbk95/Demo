@@ -193,7 +193,178 @@ print (list(x))
 ```
 
 ## 6. Generator
+- Về cơ bản, generator cũng là iterator, có nghĩa là generator cũng hỗ trợ giao thức iteration. Hàm generator trả về một dãy các kết quả thay vì một như các hàm bình thường
+- Định nghĩa một hàm generator cũng tương tự như định nghĩa hàm thông thường, sử dụng từ khóa `def` để định nghĩa hàm và `yield` để trả về kết quả. 
+- Điểm đặc biệt của generator nằm ở cách hoạt động với từ khóa trả về `yield`: Khi gọi phương thức `__next__()` ban đầu, hàm generator sẽ thực hiện các câu lệnh từ đầu cho đến khi gặp từ khóa trả về `yield` đầu tiên. Ở lần gọi phương thức `__next__()` tiếp theo, thay vì thực hiện lại từ đầu như hàm bình thường, hàm generator sẽ thực hiện tiếp các câu lệnh phía sau từ khóa `yield` trước đó. Cứ tiếp tục như vậy cho đến khi không còn từ khóa `yield` thì sẽ sinh ra `StopIteration` exception.
+```sh
+def num_sequence(n) :
+	i = 0 
+	while ( i < n ) :
+		print ("before: ",i)
+		yield i
+		print ("after: ",i)
+		i +=1
+y = num_sequence(3)
+print (y.__next__())
+#Output: before: 0
+#		 0
+print (y.__next__())
+#Output: after: 0
+#		 before: 1
+#		 1
+print (y.__next__())
+#Output: after: 1
+#		 before: 2
+#		 2
+print (y.__next__())
+#Output: after: 2 
+#		 Traceback (most recent call last):
+#  		 File "python", line 10, in <module>
+#		 StopIteration
+
+```
 
 ## 7. Decorator
+- Trong lập trình, sẽ có nhiều trường hợp chúng ta tạo muốn thêm các hoạt động, các tính năng cho các hàm đã được định nghĩa trước đó mà không muốn làm thay đổi nội dung của các hàm đó. Trong Python, vần đề này được giải quyết bằng kỹ thuật Decorator
+- Để hiểu được Decorator, trước hết phải hiểu một số khái niệm sau trong Python
+### 7.1. Hàm
+- Ví dụ ta có hàm sau
+```sh
+def printInput(x):
+	print (x)
+```
+- Trong Python, hàm cũng là một đối tượng. Vì vậy, Hàm sẽ có các tính chất như các đối tượng thông thường. Đó là: 
+	- chúng ta có thể sử dụng các biến để tham chiếu đến các đối tượng hàm:
+	```sh
+	func_x = printInput
+	func_x("hello python")
+	#Output: hello python
+	```
+	- Gán biến này cho các biến khác:
+	```sh
+	func_y = func_x
+	```
+	- Thậm chí là xóa hàm như xóa các đối tượng và vẫn có thể gọi hàm thông qua các biến đã gán khác 
+	```sh
+	del printInput
+	func_y("hello python")
+	#output: hello python
+	```
+- Python cũng hỗ trợ hàm lồng nhau, có nghĩa là định nghĩa một hàm trong hàm khác. Tuy nhiên, các hàm được định nghĩa bên trong lại không gọi được ở bên ngoài hàm chứa nó
+```sh
+def printInput(x):
+	def add_Input(y):
+		return y + 'abc'
+	return add_Input(x)
+print (printInput("hello "))
+#output: hello abc
 
-## 8. Flask Framworks
+print (add_input("hello"))
+#output: Traceback (most recent call last):
+#		 File "python", line 6, in <module>
+#		 NameError: name 'add_Input' is not defined
+```
+- Ngoài ra, hàm trong Python còn có một tính chất nữa đó là nó có thể truyền vào tham số là một hàm và trả về một hàm khác:
+```sh
+def lower_input(x='abc'):
+	return x.lower()
+
+def upper_input(x='abc'):
+	return x.upper()
+
+def change_input(func_name):
+	if func_name == lower_input: 
+		return lower_input
+	else:
+		return upper_input
+print (change_input(lower_input)())
+#output: abc
+```
+- Cuối cùng, tất cả những tính chất trên đều xuất phát từ định nghĩa ** hàm là một đối tượng ** trong python. Vì vậy, định nghĩa này là rất quan trọng để ứng dụng hàm vào các kỹ thuật quan trọng trong python
+###7.2. Decorator
+- Ứng dụng các tính chất của một hàm trong python, người ta xây dựng một kỹ thuật gọi là decorator. Decorator là một hàm được truyền vào tham số là một hàm khác và thêm các tính năng mới cho hàm được truyền vào mà không làm thay đổi nội dung của hàm đó. Một ví dụ cơ bản về hàm decorator,
+```sh
+def say_hello():
+	print ("hello ")
+
+def func_decorator(name_func):
+	def wrapper_func():
+		print ("I'am python ")
+		name_func()
+		print ("world")
+	return wrapper_func
+
+var = func_decorator(say_hello)
+var()
+#output: I'am python
+#		 hello
+#		 world
+```
+- Chúng ta có thể thay thế câu lệnh `var = func_decorator(say_hello)` bằng cú pháp `@func_decorator`. cụ thể sử lại ví dụ trên như sau:
+```sh
+@func_decorator
+def say_hello():
+	print ("hello ")
+
+say_hello()
+#output: I'am python
+#		 hello
+#		 world
+```
+- Kết quả trả về của hàm decorator là một hàm. Vì vậy, hàm decorator này cũng có thể là tham số của một hàm decorator khác.
+```sh
+def func_decorator1(func_to_decorate):
+	def wrapper_func():
+		print ("before func to decorate 1")
+		func_to_decorate()
+		print ("after func to decorate 1")
+	return wrapper_func		
+
+def func_decorator2(func_to_decorate):
+	def wrapper_func():
+		print ("before func to decorate 2")
+		func_to_decorate()
+		print ("after func to decorate 2")
+	return wrapper_func
+
+def say_hello():
+	print ("hello world")
+
+a = func_decorator1(func_decorator2(say_hello))
+a()
+
+#output: before func to decorate 1
+#		 before func to decorate 2
+#		 hello world
+#		 after func to decorate 2
+#		 after func to decorate 1
+``` 
+- Python cũng hỗ trợ cú pháp nhiều decorator lồng nhau và thứ tự sắp xếp của các hàm decorator ảnh hưởng đến thứ tự thực hiện các hàm. cụ thể như sau:
+```sh
+@func_decorator1
+@func_decorator2
+def say_hello():
+	print ("hello world")
+
+a = say_hello
+a()
+#output: before func to decorate 1
+#		 before func to decorate 2
+#		 hello world
+#		 after func to decorate 2
+#		 after func to decorate 1
+
+# sắp xếp lại thì kết quả sẽ khác
+@func_decorator1
+@func_decorator2
+def say_hello():
+	print ("hello world")
+
+a = say_hello
+a()
+#output: before func to decorate 2
+#		 before func to decorate 1
+#		 hello world
+#		 after func to decorate 1
+#		 after func to decorate 2
+```
