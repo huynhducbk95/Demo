@@ -1,3 +1,4 @@
+
 # Tài liệu tổng quan về Python 3
 ## 1. Tổng quan
 - Định nghĩa: Python là một ngôn ngữ lập trình bậc cao, thông dịch, hướng đối tượng, đa mục đich và cũng là ngôn ngữ lập trình động
@@ -73,12 +74,123 @@ print var
 >> so sánh giữa python 2 và python 3
 ``` 
 - Trong python 3, unicode được mặc định hỗ trợ. Vậy nên, không cần quan tâm đến unicode khi sử dung Python 3
+** 
 
 ## 3. Built-in functions
-
-## 4. Object
+- Trong Python tồn tại 2 loại hàm:
+	- Hàm built-in: là các hàm được hỗ trợ bởi 
+## 4. Object Oriented
+- Python là ngôn ngữ hướng đối tượng, với các khái niệm chính sau:
+	- `Class`: 
 
 ## 5. Iterator
+###5.1. Iterable
+- Iterable là các đối tượng có thể sử dụng vòng lặp `for` để duyệt quá các phần tử. ví dụ: string, dictionary, tuple, list
+```sh
+# string
+var_a = "python"
+for i in var_a :
+	print (i)
+
+# list
+list_a = [1,2,3,4]
+for i in list_a:
+	print (i)
+
+# dict
+dict_a = {1 : "a", 2 : "b"}
+for i in dict_a:
+	print (i)
+```
+- Hoạt động duyệt qua các phần tử của các đối tượng Iterable được gọi là Iteration
+###5.2. Giao thức Iteration
+- Các đối tượng Iterable mặc định được cài đặt sẵn phương thức `__iter__()`. Phương thức `__iter__()` này sẽ trả về một đối tượng iterator. Đối tượng iterator này được hỗ trợ giao thức Iteration.
+- Giao thức Iteration là giao thức được tạo bởi bộ 2 phương thức sau:
+	- Phương thức __iter__() : trả về đối tượng iterator
+	- Phương thức __next__() : trả về phần tử tiếp theo trong iterable. Nếu không có phần tử tiếp theo này thì sẽ sinh ra ngoại lệ `StopIteration`
+- Để sử dụng iterator, python hỗ trợ 2 cách đó là sử dụng hàm built-in hoặc tự tạo ra đối tượng iterator thông qua định nghĩa class
+- Sử dụng hàm built-in: Python cung cấp hàm `iter()` với tham số đầu vào là một đối tượng iterable và trả về một đối tượng iterator
+```sh
+listA = [1,2,3,4]
+iterObj = iter(list)
+print (iterObj.__next__())
+#Output: 1
+print (iterObj.__next__())
+#Output: 2
+print (iterObj.__next__())
+#Output: 3
+print (iterObj.__next__())
+#Output: 4
+print (iterObj.__next__())
+#Output: Traceback (most recent call last):
+#  		File "python", line 11, in <module>
+#		StopIteration
+```
+- Bên cạnh hàm built-in thì chúng ta cũng có thể tự tạo ra các đối tượng iterator thông qua các class. ví dụ sau sẽ tạo ra một class `num_sequence`
+```sh
+class num_sequence:
+	def __init__(self,n):
+		self.i = 0
+		self.n = n
+	def __iter__(self):
+		return self
+	def __next__(self):
+		if self.i < self.n :
+			x = self.i
+			self.i += 1
+			return x
+		else 
+			raise StopIteration
+```
+- Tương tự như các đối tượng iterable, các Object của class `num_sequence` sẽ sử dụng phương thức `__iter__()` để tạo ra đối tượng iterator và sử dụng phương thức `__next__()` để trả về phần tử tiếp theo cho đến khi không còn phần tử tiếp theo thì sẽ sinh ra `StopIteractor` exception 
+```sh
+listA = num_sequence(3)
+print (listA.__next__())
+# Output: 0
+print (listA.__next__())
+# Output: 1
+print (listA.__next__())
+# Output: 2
+print (listA.__next__())
+# Output: 3
+print (listA.__next__())
+#Output: Traceback (most recent call last):
+#  		File "python", line 10, in <module>
+#		StopIteration
+```
+- Có một đặc điểm chung ở các ví dụ trên là các phần tử của các iterable chỉ được duyệt một lần (không thể duyệt lại được lần 2). Điều này là do mỗi iterator object chỉ có thể duyệt được 1 lần, mà trong các ví dụ trên các iterable object trả về một iterator là chính nó (có nghĩa là iterable và iterator là một).
+```sh
+print (list(listA))
+#Output: [ 0, 1 , 2 ]
+print (list(listA))
+#Output: []
+```
+- Vì vậy, để có thể duyệt bao nhiêu lần tùy ý thì cần phải tạo iterator từ một đối tượng khác (có nghĩa là iterable và iterator không phải là một nữa). ví dụ sau sẽ tạo iterator thông qua một đối tượng khác
+```sh
+class num_sequence:
+	def __int__(self,n):
+		self.n = n
+	def __iter__(self):
+		return num_sequence_iter(self.n)
+class num_sequence_iter:
+	def __init__(self,n):
+		self.i = 0 
+		self.n = n
+	def __iter__(self):
+		return self
+	def __next__():
+		if self.i < self.n :
+			x = self.i
+			self.i += 1
+			return x
+		else :
+			raise StopIteration
+x = num_sequence(3)
+print (list(x))
+#Output: [0,1,2]
+print (list(x))
+#Output: [0,1,2]
+```
 
 ## 6. Generator
 
