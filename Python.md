@@ -188,7 +188,7 @@ print (x.__fee)
 
 <h2><a name="iterator">4. Iterator</a></h2>
 <h4><a name="iterable">4.1. Iterable</a></h4>
-- Iterable là các đối tượng có thể sử dụng vòng lặp `for` để duyệt quá các phần tử. ví dụ: string, dictionary, tuple, list
+- Để tìm hiểu về Iterator, trước hết phải được khái niệm `iterable`. Iterable hiểu đơn giản là các đối tượng có thể sử dụng vòng lặp `for` để duyệt quá các phần tử. ví dụ: string, dictionary, tuple, list
 ```sh
 # string
 var_a = "python"
@@ -205,7 +205,7 @@ dict_a = {1 : "a", 2 : "b"}
 for i in dict_a:
 	print (i)
 ```
-- Hoạt động duyệt qua các phần tử của các đối tượng Iterable được gọi là Iteration
+- Hoạt động duyệt qua các phần tử của các đối tượng Iterable được gọi là Iteration.
 
 <h4><a name="protocol_iter">4.2. Giao thức Iteration</a></h4>
 - Các đối tượng Iterable mặc định được cài đặt sẵn phương thức `__iter__()`. Phương thức `__iter__()` này sẽ trả về một đối tượng iterator. Đối tượng iterator này được hỗ trợ giao thức Iteration.
