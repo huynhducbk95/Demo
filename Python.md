@@ -4,7 +4,7 @@
 <h4><a href="#dinh_nghia">1.	Định nghĩa</a></h4>
 <h4><a href="#new">2.	Điểm mới của Python 3</a></h4>
 <h4><a href="#object">3. Object</a></h4>
-<h4><a name="iterator">4. Iterator</a>
+<h4><a href="#iterator">4. Iterator</a>
 <ul>
 	<li><a href="#iterable">4.1. Iterable</a></li>
 	<li><a href="#protocol_iter">4.2. Giao thức Iteration</a></li>
