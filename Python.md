@@ -101,7 +101,7 @@ print var
 - Trong Python 3, hàm range bị loại bỏ và hàm xrange được đổi tên thành hàm range.
 
 ### raise exception
-- Trong python 2, tât cả cú pháp của raise exception đều được chấp nhận
+- Trong python 2, tất cả cú pháp của raise exception đều được chấp nhận
 - Trong python 3, chỉ cho phép sử dụng cú pháp có dấu ngoặc ()
 ```sh
 raise IOError, "file error" #This is accepted in Python 2
@@ -110,8 +110,8 @@ raise IOError, "file error" #syntax error is raised in Python 3
 raise IOError("file error") #this is the recommended syntax in Python 3
 ```
 <h2><a name="object">3. Object</a></h2>
-- Ở phần này, mình sẽ so sánh hướng đối tượng được sử dụng trong java và python. Cả hai có một số điểm khá là khác nhau
-- Để trình bày các khái niệm cơ bản của hướng đối tượng trong python, mình sẽ sử dụng ví dụ một class sau:
+- Về cơ bản, lập trình hướng đối tượng trong python và các ngôn ngữ khác là giống nhau. Bên cạnh đó, python cũng tồn tại một số điểm khác biệt. Trong phần này, chúng ta sẽ đi tìm hiểu các điểm khác biệt này
+- Để trình bày các khái niệm cơ bản của hướng đối tượng trong python, chúng ta sẽ sử dụng ví dụ một class sau:
 ```sh
 class Student:
 	"Document string for class (optional)"
