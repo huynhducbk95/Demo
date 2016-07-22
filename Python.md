@@ -187,7 +187,7 @@ print (x.__fee)
 ```
 
 <h2><a name="iterator">4. Iterator</a></h2>
-<h4><a name="iterable">4.1. Iterable</a></h4>
+<h3><a name="iterable">4.1. Iterable</a></h3>
 - Để tìm hiểu về Iterator, trước hết phải được khái niệm `iterable`. Iterable hiểu đơn giản là các đối tượng có thể sử dụng vòng lặp `for` để duyệt quá các phần tử. ví dụ: string, dictionary, tuple, list
 ```sh
 # string
@@ -207,7 +207,7 @@ for i in dict_a:
 ```
 - Hoạt động duyệt qua các phần tử của các đối tượng Iterable được gọi là Iteration.
 
-<h4><a name="protocol_iter">4.2. Giao thức Iteration</a></h4>
+<h3><a name="protocol_iter">4.2. Giao thức Iteration</a></h3>
 - Các đối tượng Iterable mặc định được cài đặt sẵn phương thức `__iter__()`. Phương thức `__iter__()` này sẽ trả về một đối tượng iterator. Đối tượng iterator này được hỗ trợ giao thức Iteration.
 - Giao thức Iteration là giao thức được tạo bởi bộ 2 phương thức sau:
 	- Phương thức __iter__() : trả về đối tượng iterator
@@ -330,7 +330,7 @@ print (y.__next__())
 - Trong lập trình, sẽ có nhiều trường hợp chúng ta tạo muốn thêm các hoạt động, các tính năng cho các hàm đã được định nghĩa trước đó mà không muốn làm thay đổi nội dung của các hàm đó. Trong Python, vần đề này được giải quyết bằng kỹ thuật Decorator
 - Để hiểu được Decorator, trước hết phải hiểu một số khái niệm sau trong Python
 
-<h4><a name="function">6.1. Function</a></h4>
+<h3><a name="function">6.1. Function</a></h3>
 - Ví dụ ta có hàm sau:
 ```sh
 def printInput(x):
@@ -385,7 +385,7 @@ print (change_input(lower_input)())
 ```
 - Cuối cùng, tất cả những tính chất trên đều xuất phát từ định nghĩa ** hàm là một đối tượng ** trong python. Vì vậy, định nghĩa này là rất quan trọng để ứng dụng hàm vào các kỹ thuật quan trọng trong python
 
-<h4><a name="func_decorator">6.2. Function Decorator</a></h4>
+<h3><a name="func_decorator">6.2. Function Decorator</a></h3>
 - Ứng dụng các tính chất của một hàm trong python, người ta xây dựng một kỹ thuật gọi là decorator. Decorator là một hàm được truyền vào tham số là một hàm khác và thêm các tính năng mới cho hàm được truyền vào mà không làm thay đổi nội dung của hàm đó. Một ví dụ cơ bản về hàm decorator,
 ```sh
 def say_hello():
@@ -512,7 +512,7 @@ demoObj.show("hello","world")
 ```
 - Khi decorator một hàm thì hàm đó sẽ được decorate mãi mãi mà không thể bỏ decorator được. Vậy, làm thế nào để sử dụng hàm gốc khi chưa decorator? cách làm đơn giản nhất là truyền cho hàm `wrapper` một biến tham chiếu đến hàm gốc.
 
-<h4><a name="class_decorator">6.3. Class Decorator</a></h4>
+<h3><a name="class_decorator">6.3. Class Decorator</a></h3>
 
 - Các class trong python cũng là một đối tượng. Vì vậy, một class có đầy đủ tính chất của một đối tượng và đương nhiên class cũng có thể là tham số truyền vào hay là kết quả trả về cho một hàm
 - Class Decorator là quá trình thêm các tính năng, các biến mới cho một class mà không làm thay đổi nội dung của class đó. Một ví dụ đơn giản về class sau:
