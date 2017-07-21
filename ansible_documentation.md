@@ -9,7 +9,24 @@
    - [1.5.1. Cấu hình qua biến môi trường](#variableEvn)
    - [1.5.2. Cấu hình qua file cấu hình](#configurationfile)
 - [Chương 2: Cơ bản về Ansible](#ansiblebasic)
+ - [2.1. YAML](#yaml)
+ - [2.2. Hello Ansible](#helloansible)
 - [Chương 3: Playbook](#playbook)
+ - [3.1. Một playbook cơ bản](#basicplaybook)
+ - [3.2. Tạo user bằng Ansible](#createuseransible)
+ - [3.3. Jinja2 template](#jinja2template)
+- [Chương 4: Quản lý multiple host với Ansible](#multihostmanage)
+ - [4.1. Inventory file](#inventoryfile)
+ - [4.2. Variables](#variables)
+ - [4.3. Vòng lặp trong Ansible](#ansibleloop)
+- [Chương 5: Ansible trong các triển khai phức tạp](#complexdeployment)
+ - [5.1. local_action](#localaction)
+ - [5.2. delegate_to](#delegateto)
+ - [5.3. Conditional](#conditional)
+ - [5.4. Boolean conditional](#Booleanconditional)
+ - [5.5. Include](#include)
+ - [5.6. Handler](#handler)
+ - [5.7. Role](#role)
 
 ## Chương 1: Giới thiệu về Ansible <a name="introduction"></a>
 Trước khi đi vào tìm hiểu các khái niệm cơ bản và nâng cao trong ansible, trước tiên, chúng ta cần hiểu được ansible là gì? vì sao dùng ansible? kiến trúc của ansible như thế nào?... Trả lời những câu hỏi này sẽ giúp chúng ta xác định được tốt hơn mục tiêu để học ansible phục vụ cho những dự án của mình.
@@ -36,11 +53,30 @@ Từ đây, chúng ta cũng có thể thấy được, các hệ thống **agent
 ## 1.2. Ansible là gì? <a name='whatisansible'></a>
 Ansible là một IT automation tool, thuộc vào hệ thống agent-less. Mục tiêu của ansible là: đơn giản hóa, nhất quán, bảo mật, tin tưởng cao và dễ sử dụng.
 
-Ansible sử dụng chủ yếu chế độ **push** thông qua kết nối SSH. Chúng ta có thể sử dụng ansible để thực hiện các hoạt động song song trên các host khác nhau.
-## 1.3. Kiến trúc Ansible <a name='ansiblearchitecture'></a>
+Ansible sử dụng chủ yếu chế độ **push** thông qua kết nối SSH. Chúng ta có thể sử dụng ansible để thực hiện các hoạt động song song trên các host khác nhau. Ansible vô cùng đơn giản để cài đặt và cấu hình. Ansible có thể giúp bạn quản lý cấu hình, triển khai các ứng dụng, và các thực hiện các hoạt động một các tự động. Bên cạnh đó, Ansible cũng hỗ trợ cơ chế điều phối, khi đó bạn có thể chạy một chuỗi hoặc một tập các sự kiện nào đó trên các server khác nhau.
 
+Không giống như Puppet hay Chef, ansible không sử dụng một **angent** tại remote host. Thay vào đó, ansible sử dụng SSH với giả sử tất cả các host muốn quản lý đều đã cài đặt SSH server và Python cũng được cài trên remote host. Điều này có nghĩa là chúng ta không cần phải thiết lập môi trường tại remote host.
+
+## 1.3. Kiến trúc Ansible <a name='ansiblearchitecture'></a>
+Ansible được thiết kế theo kiến trúc sau đây:
+
+![](https://www.packtpub.com/graphics/9781783550630/graphics/0630OT_01_01.jpg)
+
+Ý tưởng về kiến trúc của ansible ở đây là có một hoặc nhiều Command Center (hiểu cơ bản là các server cài đặt ansible), nơi sẽ phát ra các câu lệnh đến các remote host hoặc chạy một tâp các hoạt động thông qua các playbook.
+
+Host inventory file xác định các remote host sẽ thực hiện các hành động. Playbook là nơi chứa một hoặc nhiều task mà được thực hiện bởi một core module của ansible cung cấp hoặc là một module được định nghĩa bởi người dùng.
 ## 1.4. Cài đặt Ansible <a name='ansibleinstallation'></a>
-Cài đặt ansible rất đơn giản, 
+Cài đặt ansible rất đơn giản, chúng ta có thể thực hiện một trong số các cách sau:
+
+Cài thông qua `yum`:
+```
+$ sudo yum install ansible
+```
+Cài thông qua `pip`:
+```
+sudo pip install ansible
+```
+Trong tài liệu này, chúng ta sẽ tìm hiểu về ansible version 2.0.
 ## 1.5. Cấu hình Ansible <a name='ansibleconfiguration'></a>
 File cấu hình của ansible sử dụng format là INI để lưu trữ dữ liệu cấu hình. Bạn có thể overwrite gần như tất cả cấu hình của ansible thông qua các tùy chọn khi thực hiện các playbook (khái niệm này sẽ được nói đến chi tiết sau) hoặc thông qa các biến môi trường.
 
@@ -93,7 +129,7 @@ timeoute = 60
 log_path = /var/log/ansible.log
 ```
 
-## Chương 3: Cơ bản về ansible
+## Chương 3: Cơ bản về ansible <a name='ansiblebasic'></a>
 Nhưng chúng ta cũng đã biết, ansible được sử dụng cho cả hai nhiệm vụ là tạo ra và quản lý toàn bộ một cơ sở hạ tầng, cũng có thể được tích hợp vào một cơ sở hạ tầng đã có trước đó.
 
 Trong chương này, chúng ta sẽ tìm hiểu các vấn đề sau:
@@ -103,7 +139,7 @@ Trong chương này, chúng ta sẽ tìm hiểu các vấn đề sau:
 
 Đầu tiên, chúng ta sẽ tìm hiểu về YAML (YAML Ain't Markup Language), một ngôn ngữ tuần tự hóa dữ liệu (serialization language) được sử dụng rộng rãi trong ansible.
 
-## 3.1. YAML
+## 3.1. YAML <a name='yaml'></a>
 YAML cũng tương tự như các ngôn ngữ tuần tự hóa dữ liệu khác (chẳng hạn như JSON, XML,...) có một số định nghĩa cơ bản sau:
 - Declaration
 - List
@@ -141,7 +177,7 @@ Cuối cùng, chúng ta có thể kết hợp tất cả lại với nhau:
 
 Còn rất nhiều kiến thức về YAML, nhưng ở đây chúng ta chỉ cần hiểu cách khai báo và định nghĩa các biến, các list và dictionary để phục vụ cho việc học ansible.
 
-## 3.2. Hello Ansible
+## 3.2. Hello Ansible <a name='helloansible'></a>
 Đầu tiên, chúng ta sẽ tạo ra 1 task cơ bản là ping đến 2 host và sau đó sẽ echo 'Hello Ansible' lên các host. Các bước thực hiện như sau:
 - Tạo ra một `inventory` file. File này định nghĩa các host hoặc nhóm các host được dùng để thực hiện các task. Mỗi nhóm được định nghĩa trong một dấu ngoặc vuông. Ví dụ sau chúng ta có 1 group:
 	```
@@ -182,9 +218,9 @@ Như vậy là chúng ta đã in được dòng chữ **Hello Ansible** lên cá
 Trong câu lệnh này, **servers** là tên của group hoặc host muốn thực thi task, tùy chọn `-i inventory` sẽ là cung cấp file chứa thông tin về các group và host (trong trường hợp này inventory file chứa group server). Để thực hiện trên tất cả các hosts trong `inventory` file, thay thế **servers** bằng **all**. Tùy chọn m là tên module được sử dụng để thực thi (chúng ta sẽ nói nhiều hơn về module ở phần sau). và cuối cùng là tùy chọn a được sử dụng để cung cấp tham số cho module để thực thi, với lệnh `/bin/echo Hello Ansible`.
 
 Ngoài ra, để cung cấp thông tin thêm về quá trình thực thi cũng như troubleshot, chúng ta có thể sử dụng thêm tùy chọn **v**, **vv** hoặc là **vvv** để output sẽ cung cấp thêm các thông tin chi tiết hơn về quá trình thực thi.
-## Chương 4: Playbook
+## Chương 3: Playbook <a name='playbook'></a>
 Playbook là một trong các tính năng chính của ansible, nó nói cho ansible biết những gì cần thực hiện. Playbook giống như một **TODO** list của ansible để chứa danh sách các task. Mỗi task sẽ liên kết đến một **module** để thực hiện nhiệm vụ này. Playbook có cấu trúc rất đơn giản, dễ hiểu (được viết theo định dạng YAML), trong đó, module là một phần code của ansible hoặc được định nghĩa bởi người dùng bằng bất cứ ngôn ngữ lập trình nào, với điều kiện là output dưới dạng JSON. Có thể có nhiều task trong một playbook, các task này sẽ được thực hiện theo thứ tự từ trên xuống dưới.
-## 4.1. Một playbook cơ bản
+## 3.1. Một playbook cơ bản <a name='basicplaybook'></a>
 Playbook có thể có một danh sách các host, user variable, handler, task,.... Playbook cũng có thể overwrite hầu hết các cấu hình được định nghĩa trong các file cấu hình (như được nói đến ở phần trước). Bây giờ, hãy nhìn vào một ví dụ sau.
 
 Chúng ta sẽ tạo ra một playbook để đảm bảo rằng apache package sẽ được cài đặt, dịch vụ phải được **enabled** và **started**. Dưới đây là nội dung của một playbook có tên là `setup_apache.yml`:
@@ -446,7 +482,7 @@ $ ansible-playbook playbooks/os_info.yml -i inventory -e 'name=test01'
 ```
 
 Bây giờ chúng ta đã có những kiến thức cơ bản về playbook. Tiếp theo, hãy đi vào một số ví dụ phức tạp hơn.
-### Tạo một user bằng Ansible
+## 3.2. Tạo một user bằng Ansible <a name='createuseransible'></a>
 Mục tiêu của playbook này là tạo một user mà có khả năng truy cập được với một SSH key, và có thể thực hiện được các hành động như các người dùng khác mà không cần hỏi password, tức là có quyền root. Playbook sẽ có nội dung như sau:
 ```
 - hosts: servers
@@ -502,7 +538,7 @@ Như vậy là chúng ta đã có một user **ansible**, copy ssh key đến us
 
 Tiếp theo, chúng ta sẽ xem xét qua một nội dung khá của ansible, đó là **Jinja2 template**
 
-## 4.1. Jinj2 template
+## 3.3. Jinj2 template <a name='jinja2template'></a>
 Jinja2 template là một template engine được sử dụng rộng rãi trong python. Jinja2 template cũng được sử dụng để tạo ra các file trên remote host. Ở trong bài viết này, chúng ta chỉ tìm hiểu những khái niệm cơ bản cần thiết để làm việc với ansible.
 ### Variables
 Chúng ta có thể in ra nội dung của một biến với cú pháp đơn giản sau:
@@ -596,13 +632,13 @@ $ cat /var/www/html/index.html
 
 ```
 Như vậy là file cuối cùng thu được có nội dung đúng như mong muốn.
-## Chương 3: Scaling to multiple host
+## Chương 4: Quản lý multiple host với Ansible <a name='multihostmanage'></a>
 Trong chương trước chúng ta đã xác định được các host để thực hiện các hành động. Nhưng chúng ta vẫn chưa quản lý được các host này. Chương này sẽ nói rõ về nội dung này. Nội dung của chương này có các phần sau:
 - Ansible inventories
 - Ansible host/group variables
 - Ansible loops
 
-## 3.1. Inventory file
+## 4.1. Inventory file <a name='inventoryfile'></a>
 Inventory là một file được định dạng theo format INI (Initiaization) và sẽ nói với Ansible các hosts sẽ được sử dụng để thực hiện các task.
 
 Ansible có thể chạy các tasks trên nhiều host song song với nhau. Để làm được điều này, ansible cho phép chúng ta gom nhóm các host vào các group trong inventory file, sau đó sẽ truyền tên của group đến ansible. Ansible sẽ tìm kiếm group trong inventory file và chạy các task trên các host trong group song song với nhau.
@@ -652,7 +688,7 @@ ws[01:04].fale.io
 db01.fale.io
 ```
 Như vậy là thay vì chúng ta phải sử dụng 4 dòng để liệt kê ra các host thì bây giờ chỉ cần 1 dòng. Việc này sẽ có tác dụng khi số lượng host lớn.
-## 3.2. Variables
+## 4.2. Variables <a name='variables'></a>
 Chúng ta có thể định nghĩa các biến theo nhiều cách:
 - Định nghĩa bên trong playbook
 - Định nghĩa trong 1 file riêng biệt, sau đó include vào playbook
@@ -705,7 +741,7 @@ Dưới đây là các tham số mà chúng ta có thể ghi đè trong một in
 - **ansible_connection**: Tham số này xác định loại kết nối đến remote host. Các giá trị có thể đó là SSH, Paramiko hoặc local.
 - **ansible_private_key_file**: Tham số này xác định private key được sử dụng cho SSH.
 
-### Sử dụng vòng lặp trong ansible
+## 4.2. Sử dụng vòng lặp trong ansible <a name='ansibleloop'></a>
 Cũng như trong các ngôn ngữ lập trình khác, trong một số trường hợp, chúng ta có một số task mà có các tham số tương tự nhau, chỉ khác mỗi giá trị. Lúc đó, chúng ta sẽ sử dụng một danh sách các giá trị của các tham số tương tự đó. Ví dụ, để đảm bảo http và https có thể truyền qua firewall. Nếu không sử dụng danh sách thì chúng ta có playbook như sau:
 ```
 - hosts: webserver
@@ -830,11 +866,11 @@ Như vậy là chúng ta đã tìm hiểu qua những kiến thức cơ bản nh
 
 Tiếp theo, chúng ta sẽ đi vào những kiến thức phức tạp hơn để có được sức mạnh thực sự của ansible.
 
-## Chương 5: Handling Complex Deployment
+## Chương 5: Ansible trong các triển khai phức tạp <a name='complexdeployment'></a>
 Trong các chương trước, chúng ta chỉ mới tìm hiểu qua các khái niệm và triển khai các playbook đơn giản. Trong môi trường sản xuất, chúng ta thường xuyên đối mặt với nhiều trường hợp phức tạp. Những trường hợp phức tạp này bao gồm việc tương tác giữa hàng trăm hoặc hàng ngàn host và các host là phụ thuộc vào các group khác nhau, hay là các group lại thực hiện các trao đổi với nhau chẳng hạn backup hay replicate. Chương này sẽ cung cấp cho chúng ta về các tính năng cốt lõi của ansible để giải quyết các bài toán trên trong môi trường doanh nghiệp. Và mục tiêu của chương này sẽ giúp chúng ta có được một tương tưởng rõ ràng về cách viết một playbook trong môi trường sản xuất.
 
 Đầu tiên, chúng ta sẽ tìm hiểu về tính năng `local_action`.
-## 5.1. Local action
+## 5.1. Local action <a name='localaction'></a>
 Tính năng `local_action` của Ansible giúp chúng ta có thể thực hiện các task trên local host (tức là host đang chạy ansible).
 
 Xem xét các vấn đề sau:
@@ -895,7 +931,7 @@ Rõ ràng, hai kết quả là khác nhau, vì chúng ta đang đếm số proce
 
 Tiếp theo, Ansible cũng cung cấp một tính năng khác để phân chia một số hành động cụ thể đến một máy xác định: đó là tính năng `delegate_to`.
 
-## 5.2. Delegate_to
+## 5.2. Delegate_to <a name='delegateto'></a>
 Đôi khi, chúng ta muốn thực hiện một hành động trên các host khác nhau. Cho ví dụ, trong khi bạn **đang triển khai** một số hành động trên application server node, bạn muốn chạy một lệnh trên database để lấy thông tin nào đấy cần thiết trên database node. Chúng ta sẽ sử dụng câu lệnh `delegate_to: HOST` để thực hiện công việc trên database node. Dưới đây là một ví dụ:
 ```
 - hosts: servers
@@ -920,7 +956,7 @@ Tiếp theo, Ansible cũng cung cấp một tính năng khác để phân chia m
 
 ```
 Như vậy, kết quả của playbook này sẽ tương tự như playbook sử dụng `local_action` ở phần trước. Ở đây, `delegate_to` là một mở rộng của `local_action`, có nghĩa là có thể thực hiện trên các host khác không chỉ trên local host.
-### 5.3. Conditions
+### 5.3. Conditions <a name='conditional'></a>
 Cho đến bây giờ, chúng ta đã học được cách các playbook hoạt động và cách các task được thực hiện. Đó là khi chạy một playbook thì các task sẽ được thực hiện lần lượt từ trên xuống dưới. Trong một số trường hợp, chúng ta chỉ muốn thực hiện một số task trong danh sách các task của playbook. Hoặc là, trong trường hợp khác tên package khác nhau trên các OS khác nhau, ví dụ như Apache Httpd server trên RedHat thì package có tên là `httpd`, còn trên Ubuntu là `apache2`. Đối với những trường hợp này, Ansible hỗ trợ câu điều kiện để có thể thực hiện những task nhất định nếu điều kiện được thỏa mãn.
 
 Dưới đây là một ví dụ, chúng ta sẽ cài đặt Apache Httpd server trên remote host, nhưng chưa xác định được OS của remote host là Centos hay là Ubuntu. Do đó, playbook sẽ có nội dung như sau:
@@ -956,7 +992,7 @@ Như output trên thể hiện, do OS của remote host là `RedHat` nên task h
 
 Tương tự như vậy, đối với các điều kiện khác. Ansible cũng hỗ hợ các toán tử `!=`, `>`, `<`, `>=`, `<=`. Bên cạnh đó, Ansible cũng hỗ trợ các toán tử kết hợp như `AND` và `OR`
 
-## 5.4. Boolean Conditionals
+## 5.4. Boolean Conditional <a name='Booleanconditional'></a>
 Ngoài so sánh các string, Ansible cũng cho phép kiểm tra xem một biến là `True` hay `False`. Loại điều kiện này giúp bạn kiểm tra xem một biến có được định nghĩa hay không.
 
 Dưới đây là một ví dụ:
@@ -1027,7 +1063,7 @@ Dưới đây là ví dụ để kiểm tra trong trường hợp biến không 
 	  when: backup
 ```
 Bây giờ chúng ta sẽ chuyển sang một khái niệm khác rất thường xuyên được sử dụng trong các project lớn của Ansible đó là **include**
-## 5.5. Include
+## 5.5. Include <a name='include'></a>
 Ansible hỗ trợ **include** để giúp chúng ta giảm số lượng code phải viết lặp lại nhiều lần, tăng khả năng tái sử dụng code trong Ansible. Tính năng này giúp chúng ta đảm bảo được nguyên lý **DRY (DON'T REPEAT YOURSELF) **.
 
 Để tích hợp một file khác vào playbook, chúng ta sẽ thực hiện đặt dòng sau dưới các task object:
@@ -1045,7 +1081,7 @@ Chúng ta cũng có thể thêm điều kiện cho việc include. Ví dụ, ch�
   when: ansible_os_family == "RedHat"
 ```
 Chúng ta sẽ tiếp tục nói đến **include** trong phần **handler** sau đây.
-## Handler
+## 5.6. Handler <a name='handler'></a>
 Trong nhiều trường hợp, bạn có một task hoặc một danh sách các task làm thay đổi tài nguyên trên remote host, và để các task này có hiệu lực thì phải kích hoạt một sự kiện nào đó. Cho ví dụ, khi chúng ta thay đổi cấu hình của một service thì chung ta cần restart service đó. Ansible có thể kích hoạt sự kiện restart service đó bằng hành động `notify`.
 
 Mọi handler task sẽ chạy cuối cùng trong playbook, nếu như có thông báo, tức là có hành động `notify` gọi đến.
