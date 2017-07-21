@@ -10,14 +10,35 @@
    - [1.5.2. Cấu hình qua file cấu hình](#configurationfile)
 - [Chương 2: Cơ bản về Ansible](#ansiblebasic)
 - [Chương 3: Playbook](#playbook)
-- [Chương 4: Playbook](#)
 
 ## Chương 1: Giới thiệu về Ansible <a name="introduction"></a>
 Trước khi đi vào tìm hiểu các khái niệm cơ bản và nâng cao trong ansible, trước tiên, chúng ta cần hiểu được ansible là gì? vì sao dùng ansible? kiến trúc của ansible như thế nào?... Trả lời những câu hỏi này sẽ giúp chúng ta xác định được tốt hơn mục tiêu để học ansible phục vụ cho những dự án của mình.
 ## 1.1. IT automation <a name='itautomation'></a>
-Đầu tiên, chúng ta sẽ thảo luận qua về khái niệm **IT automation**
+Đầu tiên, chúng ta sẽ thảo luận qua về khái niệm **IT automation**.
+
+**IT automation** hiểu một cách cơ bản là những process và những software giúp quản lý cơ sở hạ tầng công nghệ thông tin (các cở sở hạ tầng này có thể là networking, các server hoặc là storage).
+
+Trong những giai đoạn đầu của công nghệ thông tin, chúng ta cần rất nhiều người để quản lý một cụm nhiều máy chủ (server), họ phải làm việc tập trung và chính xác. Càng về sau, các server trở nên đánh tin cậy hơn và dễ dàng để quản lý hơn, do đó, có thể chỉ cần một người quản trị có thể quản lý cả một cụm server. Tuy nhiên, tại thời điểm đó, người quản trị cần phải cài đặt các phần mềm một cách thủ công, cập nhập một cách thủ công, và thay đổi cấu hình một cách thủ công. Việc này tốn rất nhiều thời gian và dễ bị lỗi. Vì vậy, họ bắt đầu viết các kịch bản (script) để đơn giản hóa công việc của họ. Tuy nhiên, những script đó lại rất phức tạp và không phù hợp triển khai trong quy mô lớn.
+
+Những năm gần đây, các trung tâm dữ liệu phát triển mạnh về các quy mô lẫn mức độ phức tạp, nguyên nhân là do nhu cầu của các doanh nghiệp tăng lên. Do vậy, cần có những công cụ mới để thay thế các script đã được sử dụng trước đó, đó chính là nguyên nhân ra đời của các IT automation tool.
+
+IT automation được chia ra làm hai loại chính. Đó là: **agent-based system ** và **agent-less system**.
+### Agent-based system
+Agent-based system là một hệ thống có hai thành phần chính: một **server** và một client được gọi là một **agent**.
+
+Hệ thống chỉ có một **server** sẽ chứa tất cả thông tin cấu hình trong toàn bộ môi trường của bạn (toàn bộ cơ sở hạ tầng của bạn), trong khi **agent** là các server nằm trong môi trường đó. Theo chu kỳ, các **agent** sẽ kết nối đến **server** để kiểm tra các cấu hình của nó có thay đổi hay không? Nếu có, **agent** sẽ download những thay đổi và cập nhật.
+
+Có thể có nhiều **server** trong trường hợp **high availability**, tuy nhiên cấu hình của các server này là giống nhau.
+### Agent-less system
+Trong các hệ thống **agent-less**, không có sự tồn tại của **agent**. Các hệ thống **agent-less** không hoàn toàn tuân theo mô hình **server/client**, bởi vì có thể có nhiều server, thậm chí số lượng server và client có thể bằng nhau. Kết nối giữa server và client sẽ được khởi tạo bởi **server** và kết nối đến **client** thông qua một số giao thức chuẩn chẳng hạn SSH, PowerShell.
+
+Từ đây, chúng ta cũng có thể thấy được, các hệ thống **agent-based** khác với các hệ thống **agent-less** về một số vấn đề. Đối với vấn đề bảo mật, rõ ràng agent-based system cho phép tất cả các client kết nối đến, server có thể bị tấn công bất cứ lúc nào. Ngược lại, agent-less system sẽ ngăn chặn điều này bằng cách sử dụng firewall để chống lại một số truy cập nguy hiểm. Đối với vấn đề hiệu năng, agent-based system sẽ gây ra hiện tượng quá tải tại server, để cải thiện cần dùng high availability. Ngược lại, agent-less system sẽ cân bằng tải lên nhiều server trong toàn bộ môi trường.
 ## 1.2. Ansible là gì? <a name='whatisansible'></a>
+Ansible là một IT automation tool, thuộc vào hệ thống agent-less. Mục tiêu của ansible là: đơn giản hóa, nhất quán, bảo mật, tin tưởng cao và dễ sử dụng.
+
+Ansible sử dụng chủ yếu chế độ **push** thông qua kết nối SSH. Chúng ta có thể sử dụng ansible để thực hiện các hoạt động song song trên các host khác nhau.
 ## 1.3. Kiến trúc Ansible <a name='ansiblearchitecture'></a>
+
 ## 1.4. Cài đặt Ansible <a name='ansibleinstallation'></a>
 Cài đặt ansible rất đơn giản, 
 ## 1.5. Cấu hình Ansible <a name='ansibleconfiguration'></a>
