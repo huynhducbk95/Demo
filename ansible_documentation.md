@@ -707,33 +707,304 @@ Cũng như trong các ngôn ngữ lập trình khác, trong một số trường
 Khi chạy playbook, chúng ta sẽ thu được kết quả như sau:
 ```
 $ ansible-playbook -i hosts webserver.yaml
-PLAY [webserver] *************************************************
-TASK [setup] *****************************************************
-ok: [ws01.fale.io]
-ok: [ws02.fale.io]
-TASK [Ensure the HTTPd package is installed] *********************
-ok: [ws01.fale.io]
-ok: [ws02.fale.io]TASK [Ensure the HTTPd service is enabled and running] ***********
-ok: [ws02.fale.io]
-ok: [ws01.fale.io]
-TASK [Ensure HTTP can pass the firewall] *************************
-ok: [ws02.fale.io]
-ok: [ws01.fale.io]
-TASK [Ensure HTTP and
-ok: [ws02.fale.io] =>
-ok: [ws01.fale.io] =>
-ok: [ws02.fale.io] =>
-ok: [ws01.fale.io] =>
-HTTPS can pass the firewall] ***************
-(item=http)
-(item=http)
-(item=https)
-(item=https)
-PLAY RECAP *******************************************************
-ws01.fale.io
-: ok=5
-changed=0
-unreachable=0
-failed=0
+PLAY [webserver] ***********************************************************
+TASK [Gathering Facts] *****************************************************
+ok: [192.168.1.59]
+
+TASK [Ensure HTTP and HTTPS can pass the firewall] *************************
+ok: [192.168.1.59] => (item=http)
+ok: [192.168.1.59] => (item=https)
+PLAY RECAP *****************************************************************
+192.168.1.59        : ok=2      changed=0 unreachable=0             failed=0
+```
+Như trong ví dụ, `with_items` là một danh sách các giá trị của tham số `item` được gọi đến bằng cú pháp ``{{ item }}``. Khi chạy playbook, task này sẽ chạy lần lượt với từng giá trị của tham số item, và kết quả được in ra như output ở trên.
+### Nested loop
+Có nhiều trường hợp, chúng ta muốn lặp qua các thành phần của một list, và mỗi item lại là một list khác (tức là vòng chuỗi lồng nhau). Cho ví dụ, bây giờ, chúng ta muốn tạo ra các folder `mail` và folder `public_html` trong folder `home` cho hai user là `alice` và `bob`. Bạn có thể thực hiện việc này bằng cách sử dụng vòng lặp lồng nhau. Playbook sẽ có nội dung như sau:
+```
+- hosts: all
+  remote_user: ansible
+  vars:
+	users:
+		- alice
+		- bob
+	folders:
+		- mail
+        - public_html
+  tasks:
+	- name: Ensure the users exist
+	  user:
+		name: '{{ item }}'
+	  become: True
+	  with_items:
+		- '{{ users }}'
+
+	- name: Ensure the folders exist
+	  file:
+		path: '/home/{{ item.0 }}/{{ item.1 }}'
+		state: directory
+	  become: True
+	  with_nested:
+		- '{{ users }}'
+		- '{{ folders }}'
+```
+Xem xét ví dụ trên ta thấy, trong task `Ensure the users exist` sử dụng `with_items` tương tự phần trước với users list. Trong task `Ensure the folder exist`, chúng ta đã sử dụng vòng lặp lồng nhau với cú pháp `with_nested` và có giá trị là danh sách hai list là users list và folders list. Tương tự như trong các ngôn ngữ lập trình, chỉ số sẽ được đánh từ 0. Do vậy, để gọi đến users list sẽ dùng cú pháp `item.0` và để gọi đến folder list sẽ dùng đến `item.1`.
+### Fileglobs loop với with_fileglobs
+Đôi khi, chúng ta muốn thực hiện mốt số hành động lên một file trong một folder nhất định nào đó. Cho ví dụ như, chúng ta muốn copy những file có tên bắt đầu bởi `rt_` từ một folder này đến một folder khác. Để làm điều này, chúng ta có playbook sau:
+```
+- hosts: all
+  remote_user: ansible
+  tasks:
+	- name: Ensure the folder /tmp/iproute2 is present
+	  file:
+		dest: '/tmp/iproute2'
+		state: directory
+	  become: True
+	- name: Copy files that start with rt to the tmp folder
+	  copy:
+		src: '{{ item }}'
+		dest: '/tmp/iproute2'
+		remote_src: True
+	  become: True
+	  with_fileglob:
+		- '/etc/iproute2/rt_*'
+```
+Thực hiện playbook trên, ta sẽ có được các file bắt đầu với `rt_` được chứa trong thư mục `/etc/iproute2/` được tạo ra ở task trước.
+### Interger loop với with_sequence
+Trong trường hợp chúng ta cần thực hiện lặp trong một phạm vi số nguyên nào đó (ví dụ từ 0 đến 10). Cụ thể, chúng ta muốn tạo ra một tập các folder có tên là `folderXY` với XY là các số từ 1 đến 10. Để làm điều này, chúng ta có file `with_sequence.yml` sau:
+```
+- hosts: all
+  remote_user: ansible
+  tasks:
+	- name: Create the folders /tmp/dirXY with XY from 1 to 10
+	  file:
+		dest: '/tmp/dir{{ item }}'
+		state: directory
+	  with_sequence: start=1 end=10
+	  become: True
 ```
 
+Như vậy là chúng ta đã tìm hiểu qua những kiến thức cơ bản nhắt của ansible. Đến đây, chúng ta có thể hiểu được các nội dung sau:
+- Ansible là gì? kiến trúc của ansible như thế nào?
+- Viết chương trình in ra dòng chữ 'Hello Ansible'
+- Làm quen với playbook và các thành phần trong playbook
+- Tìm hiểu được một số module và cách sử dụng chúng trong ansible
+- Tìm hiểu các khái niệm như variable, inventory file, template Jinja2, iterator.
+
+Tiếp theo, chúng ta sẽ đi vào những kiến thức phức tạp hơn để có được sức mạnh thực sự của ansible.
+
+## Chương 5: Handling Complex Deployment
+Trong các chương trước, chúng ta chỉ mới tìm hiểu qua các khái niệm và triển khai các playbook đơn giản. Trong môi trường sản xuất, chúng ta thường xuyên đối mặt với nhiều trường hợp phức tạp. Những trường hợp phức tạp này bao gồm việc tương tác giữa hàng trăm hoặc hàng ngàn host và các host là phụ thuộc vào các group khác nhau, hay là các group lại thực hiện các trao đổi với nhau chẳng hạn backup hay replicate. Chương này sẽ cung cấp cho chúng ta về các tính năng cốt lõi của ansible để giải quyết các bài toán trên trong môi trường doanh nghiệp. Và mục tiêu của chương này sẽ giúp chúng ta có được một tương tưởng rõ ràng về cách viết một playbook trong môi trường sản xuất.
+
+Đầu tiên, chúng ta sẽ tìm hiểu về tính năng `local_action`.
+## 5.1. Local action
+Tính năng `local_action` của Ansible giúp chúng ta có thể thực hiện các task trên local host (tức là host đang chạy ansible).
+
+Xem xét các vấn đề sau:
+- Sinh ra một host mới.
+- Quản lý các câu lệnh của bạn trong việc cài đặt các pakage và thiết lập cấu hình.
+
+Có một số task có thể chạy trên local machine, nơi mà đang chạy câu lệnh `ansible-playbook` hơn là việc login vào một remote host và thực hiện câu lệnh này. Ví dụ, chúng ta muốn thực hiện một lệnh shell trên local host. Chúng ta sẽ truyền tên module và các tham số của module đó đến `local_action`, Ansible sẽ thực thi task tại máy local. Hãy xem cách hoạt động của `local_action` với module `shell` thông qua ví dụ sau:
+```
+- hosts: servers
+  remote_user: centos
+  tasks:
+    - name: Count processes running on the remote system
+      shell: ps | wc -l
+      register: remote_processes_number
+
+    - name: Print remote running processes
+      debug:
+         msg: '{{ remote_processes_number.stdout }}'
+
+    - name: Count processes running on the local system
+      local_action: shell ps | wc -l
+      register: local_processes_number
+
+    - name: Print local running processes
+      debug:
+         msg: '{{ local_processes_number.stdout }}'
+```
+
+Ở trong ví dụ trên, task đầu tiên thực hiện câu lệnh `ps | wc -l` trên remote host để đếm số process đang chạy và task thứ hai in ra số lượng process được trả về task đầu tiên thông qua tham số `remote_process_number`. Tiếp theo, task thứ 3 thực hiện cùng câu lệnh đếm số lượng process, nhưng được thực hiện trên local host. Chúng ta sử dụng module `local_action` với tham số là module `shell` và các tham số của module `shell`. Kết quả chạy playbook như sau:
+```
+$ ansible-playbook -i inventory playbooks/local_action.yml
+
+PLAY [servers]************************************************************
+
+TASK [Gathering Facts] ****************************************************
+ok: [192.168.1.192]
+
+TASK [Count processes running on the remote system] ***********************
+changed: [192.168.1.192]
+
+TASK [Print remote running processes] *************************************
+ok: [192.168.1.192] => {
+    "msg": "7"
+}
+
+TASK [Count processes running on the local system] ************************
+changed: [192.168.1.192 -> localhost]
+
+TASK [Print local running processes] **************************************
+ok: [192.168.1.192] => {
+    "msg": "11"
+}
+
+PLAY RECAP ****************************************************************
+192.168.1.192              : ok=5    changed=2    unreachable=0    failed=0
+```
+Rõ ràng, hai kết quả là khác nhau, vì chúng ta đang đếm số process trên hai host.
+
+Tiếp theo, Ansible cũng cung cấp một tính năng khác để phân chia một số hành động cụ thể đến một máy xác định: đó là tính năng `delegate_to`.
+
+## 5.2. Delegate_to
+Đôi khi, chúng ta muốn thực hiện một hành động trên các host khác nhau. Cho ví dụ, trong khi bạn **đang triển khai** một số hành động trên application server node, bạn muốn chạy một lệnh trên database để lấy thông tin nào đấy cần thiết trên database node. Chúng ta sẽ sử dụng câu lệnh `delegate_to: HOST` để thực hiện công việc trên database node. Dưới đây là một ví dụ:
+```
+- hosts: servers
+  remote_user: centos
+  tasks:
+    - name: Count processes running on the remote system
+      shell: ps | wc -l
+      register: remote_processes_number
+
+    - name: Print remote running processes
+      debug:
+         msg: '{{ remote_processes_number.stdout }}'
+
+    - name: Count processes running on the local system
+      shell: ps | wc -l
+      delegate_to: localhost
+      register: local_processes_number
+
+    - name: Print local running processes
+      debug:
+         msg: '{{ local_processes_number.stdout }}'
+
+```
+Như vậy, kết quả của playbook này sẽ tương tự như playbook sử dụng `local_action` ở phần trước. Ở đây, `delegate_to` là một mở rộng của `local_action`, có nghĩa là có thể thực hiện trên các host khác không chỉ trên local host.
+### 5.3. Conditions
+Cho đến bây giờ, chúng ta đã học được cách các playbook hoạt động và cách các task được thực hiện. Đó là khi chạy một playbook thì các task sẽ được thực hiện lần lượt từ trên xuống dưới. Trong một số trường hợp, chúng ta chỉ muốn thực hiện một số task trong danh sách các task của playbook. Hoặc là, trong trường hợp khác tên package khác nhau trên các OS khác nhau, ví dụ như Apache Httpd server trên RedHat thì package có tên là `httpd`, còn trên Ubuntu là `apache2`. Đối với những trường hợp này, Ansible hỗ trợ câu điều kiện để có thể thực hiện những task nhất định nếu điều kiện được thỏa mãn.
+
+Dưới đây là một ví dụ, chúng ta sẽ cài đặt Apache Httpd server trên remote host, nhưng chưa xác định được OS của remote host là Centos hay là Ubuntu. Do đó, playbook sẽ có nội dung như sau:
+```
+
+```
+Trong playbook trên, task đầu tiên chúng ta sẽ đưa ra thông tin về OS của remote host. Trong trường hợp, biến `ansible_os_family` (đây là biến của việc thu thập thông tin remote từ task mặc định `Gathering Fact` được nói ở phần trước đây) có giá trị là `RedHat` thì task hai thực hiện, ngược lại, nếu `ansible_os_family` là `Ubuntu` thì task thứ ba sẽ được thực hiện.
+
+Chạy playbook và kết quả thu được như sau:
+```
+$ ansible-playbook -i inventory playbooks/conditions.yml
+
+PLAY [servers] ****************************************************************
+
+TASK [Gathering Facts] ********************************************************
+ok: [192.168.1.192]
+
+TASK [Print the ansible_os_family value] **************************************
+ok: [192.168.1.192] => {
+    "msg": "RedHat"
+}
+
+TASK [Ensure the httpd package is updated] ************************************
+ok: [192.168.1.192]
+
+TASK [Ensure the apache2 package is updated] **********************************
+skipping: [192.168.1.192]
+
+PLAY RECAP ********************************************************************
+192.168.1.192                  : ok=3    changed=0    unreachable=0    failed=0
+```
+Như output trên thể hiện, do OS của remote host là `RedHat` nên task hai được thực hiện và task ba có trạng thái là **Skipping**.
+
+Tương tự như vậy, đối với các điều kiện khác. Ansible cũng hỗ hợ các toán tử `!=`, `>`, `<`, `>=`, `<=`. Bên cạnh đó, Ansible cũng hỗ trợ các toán tử kết hợp như `AND` và `OR`
+
+## 5.4. Boolean Conditionals
+Ngoài so sánh các string, Ansible cũng cho phép kiểm tra xem một biến là `True` hay `False`. Loại điều kiện này giúp bạn kiểm tra xem một biến có được định nghĩa hay không.
+
+Dưới đây là một ví dụ:
+```
+- hosts: servers
+  remote_user: foo
+  vars:
+     backup: True
+  tasks:
+	- name: Copy the crontab in tmp if the backup variable is true
+	  copy:
+		src: /etc/crontab
+		dest: /tmp/crontab
+		remote_src: True
+	  when: backup
+```
+Kết quả hiển thị ra màn hình sau khi chạy playbook này như sau:
+```
+$ ansible-playbook -i inventory playbooks/boolean_conditional.yml
+
+PLAY [all] ********************************************************************
+
+TASK [Gathering Facts] ********************************************************
+ok: [192.168.1.192]
+
+TASK [Copy the crontab in tmp if the backup variable is true] *****************
+changed: [192.168.1.192]
+
+PLAY RECAP ********************************************************************
+192.168.1.192              : ok=2    changed=1    unreachable=0    failed=0
+```
+Trong trường hợp set lại `backup: False` thì output như sau:
+```
+$ ansible-playbook -i inventory playbooks/boolean_conditional.yml
+
+PLAY [all] ****************************************************************
+
+TASK [Gathering Facts] ****************************************************
+ok: [192.168.1.192]
+
+TASK [Copy the crontab in tmp if the backup variable is true] **************
+skipping: [192.168.1.192]
+
+PLAY RECAP *****************************************************************
+192.168.1.192              : ok=1    changed=0    unreachable=0    failed=0
+```
+Như vậy, task thứ hai đã bị skip do `backup` được set là `False`.
+
+**Note:** Trường hợp biến không được định nghĩa, Asible sẽ coi giá trị của nó là `False`.
+
+Dưới đây là ví dụ để kiểm tra trong trường hợp biến không được định nghĩa và biến được định nghĩa. Playbook có nội dung như sau:
+```
+- hosts: all
+  remote_user: ansible
+  vars:
+	backup: True
+  tasks:
+	- name: Check if the backup_folder is set
+	  fail:
+		 msg: 'The backup_folder needs to be set'
+	  when: backup_folder is not defined
+
+    - name: Copy the crontab in tmp if the backup variable is true
+	  copy:
+		 src: /etc/crontab
+		 dest: '{{ backup_folder }}/crontab'
+		 remote_src: True
+	  when: backup
+```
+Bây giờ chúng ta sẽ chuyển sang một khái niệm khác rất thường xuyên được sử dụng trong các project lớn của Ansible đó là **include**
+## 5.5. Include
+Ansible hỗ trợ **include** để giúp chúng ta giảm số lượng code phải viết lặp lại nhiều lần, tăng khả năng tái sử dụng code trong Ansible. Tính năng này giúp chúng ta đảm bảo được nguyên lý **DRY (DON'T REPEAT YOURSELF) **.
+
+Để tích hợp một file khác vào playbook, chúng ta sẽ thực hiện đặt dòng sau dưới các task object:
+```
+- include: FILENAME.yml
+```
+Chúng ta cũng có thể truyền một số biến đến file được include. Chúng ta sẽ thực hiện như sau:
+```
+- include: FILENAME.yml variable1='value1' variable2='value2'
+```
+Chúng ta cũng có thể thêm điều kiện cho việc include. Ví dụ, chúng ta sẽ include file `RedHat.yml` nếu OS của remote host là `RedHat`:
+```
+- name: Include the file only for Red Hat OSes
+  include: redhat.yaml
+  when: ansible_os_family == "RedHat"
+```
+Chúng ta sẽ tiếp tục nói đến **include** trong phần **handler** sau đây.
+## Handler
