@@ -1,9 +1,26 @@
-# learning Ansible 2
-## Chương 1: Giới thiệu về IT automation
-## Chương 2: Giới thiệu về Ansible
-## 2.1. Kiến trúc Ansible
-## 2.2. Cài đặt Ansible
-## 2.3. Cấu hình Ansible
+# Learning Ansible 2
+# Table of Contents
+- [Chương 1: Giới thiệu về Ansible](#introduction)
+  - [1.1. IT automation](#itautomation)
+  - [1.2. Ansible là gì?](#whatisansible)
+  - [1.3. Kiến trúc của Ansible](#ansiblearchitecture)
+  - [1.4. Cài đặt Ansible](#ansibleinstallation)
+  - [1.5. Cấu hình Ansible](#ansibleconfiguration)
+   - [1.5.1. Cấu hình qua biến môi trường](#variableEvn)
+   - [1.5.2. Cấu hình qua file cấu hình](#configurationfile)
+- [Chương 2: Cơ bản về Ansible](#ansiblebasic)
+- [Chương 3: Playbook](#playbook)
+- [Chương 4: Playbook](#)
+
+## Chương 1: Giới thiệu về Ansible <a name="introduction"></a>
+Trước khi đi vào tìm hiểu các khái niệm cơ bản và nâng cao trong ansible, trước tiên, chúng ta cần hiểu được ansible là gì? vì sao dùng ansible? kiến trúc của ansible như thế nào?... Trả lời những câu hỏi này sẽ giúp chúng ta xác định được tốt hơn mục tiêu để học ansible phục vụ cho những dự án của mình.
+## 1.1. IT automation <a name='itautomation'></a>
+Đầu tiên, chúng ta sẽ thảo luận qua về khái niệm **IT automation**
+## 1.2. Ansible là gì? <a name='whatisansible'></a>
+## 1.3. Kiến trúc Ansible <a name='ansiblearchitecture'></a>
+## 1.4. Cài đặt Ansible <a name='ansibleinstallation'></a>
+Cài đặt ansible rất đơn giản, 
+## 1.5. Cấu hình Ansible <a name='ansibleconfiguration'></a>
 File cấu hình của ansible sử dụng format là INI để lưu trữ dữ liệu cấu hình. Bạn có thể overwrite gần như tất cả cấu hình của ansible thông qua các tùy chọn khi thực hiện các playbook (khái niệm này sẽ được nói đến chi tiết sau) hoặc thông qa các biến môi trường.
 
 Khi một câu lệnh ansible được chạy, câu lệnh này sẽ nhìn vào các file cấu hình của nó trong một thứ tự nhất định đã được định nghĩa trước đó như sau:
@@ -1008,3 +1025,52 @@ Chúng ta cũng có thể thêm điều kiện cho việc include. Ví dụ, ch�
 ```
 Chúng ta sẽ tiếp tục nói đến **include** trong phần **handler** sau đây.
 ## Handler
+Trong nhiều trường hợp, bạn có một task hoặc một danh sách các task làm thay đổi tài nguyên trên remote host, và để các task này có hiệu lực thì phải kích hoạt một sự kiện nào đó. Cho ví dụ, khi chúng ta thay đổi cấu hình của một service thì chung ta cần restart service đó. Ansible có thể kích hoạt sự kiện restart service đó bằng hành động `notify`.
+
+Mọi handler task sẽ chạy cuối cùng trong playbook, nếu như có thông báo, tức là có hành động `notify` gọi đến.
+
+**NOTE:** Ansible chỉ chạy mỗi handler task **duy nhất một lần** ở cuối playbook **nếu như nhận được thông báo**. Có nghĩa là có thể có nhiều task thông báo đến handler task, nhưng handler task cũng chỉ chạy duy nhất một lần sau khi các task của playbook đã thực hiện xong.
+
+Bây giờ, hãy xem xét ví dụ sau, chúng ta muốn có các task sau:
+- Đảm bảo httpd package được cài đặt trên remote host.
+- Đảm bảo httpd service được enable và start
+- Đảm bảo HTTP đi qua được firewall
+- Đảm bảo HTTPd configuration được update
+
+Chúng ta có playbook để thực hiện các task trên như sau:
+```
+- hosts: webserver
+  remote_user: ansible
+  tasks:
+    - name: Ensure the HTTPd package is installed
+      yum:
+         name: httpd
+         state: present
+      become: True
+    - name: Ensure the HTTPd service is enabled and running
+      service:
+         name: httpd
+         state: started
+         enabled: True
+      become: True
+    - name: Ensure HTTP can pass the firewall
+      firewalld:
+         service: http
+         state: enabled
+         permanent: True
+         immediate: True
+      become: True
+    - name: Ensure HTTPd configuration is updated
+      copy:
+         src: website.conf
+         dest: /etc/httpd/conf.d
+      become: True
+      notify: Restart HTTPd
+
+  handlers:
+    - name: Restart HTTPd
+      service:
+         name: httpd
+         state: restarted
+      become: True
+```
