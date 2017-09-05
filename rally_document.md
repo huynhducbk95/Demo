@@ -1,25 +1,25 @@
 # Rally documentation
 # Table of content
 - [Chương 1: Giới thiệu ](#introduction)
- - [1.1. Overview](#overview)
- - [1.2. Who is using Rally](#whouse)
- - [1.3. Use cases](#usecases)
- - [1.4. Real-life examples](#realexample)
-   - [1.4.1. How does amqp_rpc_single_reply_queue affec performance](#example1)
-   - [1.4.2. Performance of Nova list command](#example2)
-   - [1.4.3. Complex scenario](#example3)
- - [1.5. Architecture](#architecture)
+  - [1.1. Overview](#overview)
+  - [1.2. Who is using Rally](#whouse)
+  - [1.3. Use cases](#usecases)
+  - [1.4. Real-life examples](#realexample)
+    - [1.4.1. How does amqp_rpc_single_reply_queue affec performance](#example1)
+    - [1.4.2. Performance of Nova list command](#example2)
+    - [1.4.3. Complex scenario](#example3)
+  - [1.5. Architecture](#architecture)
 - [Chương 2: Installation](#install)
 - [Chương 3: Rally step by step](#rallystepbystep)
- - [3.1. Setting up the enviroment and running a task from samples](#step1)
- - [3.2. Rally inpute task format](#step2)
- - [3.3. Running task against OpenStack with read only users](#step3)
- - [3.4. Adding success criteria (SLA) for subtasks](#step4)
- - [3.5. Rally task templates](#step5)
- - [3.6. Aborting load generation on success criteria failure](#step6)
- - [3.7. Discovering more plugins in Rally](#step7)
- - [3.8. Verifying cloud via Template verifier](#step8)
- - [3.9. Profiling Openstack Internals](#step9)
+  - [3.1. Setting up the enviroment and running a task from samples](#step1)
+  - [3.2. Rally inpute task format](#step2)
+  - [3.3. Running task against OpenStack with read only users](#step3)
+  - [3.4. Adding success criteria (SLA) for subtasks](#step4)
+  - [3.5. Rally task templates](#step5)
+  - [3.6. Aborting load generation on success criteria failure](#step6)
+  - [3.7. Discovering more plugins in Rally](#step7)
+  - [3.8. Verifying cloud via Template verifier](#step8)
+  - [3.9. Profiling Openstack Internals](#step9)
 
 <a name='introduction'></a>
 ## Chương 1: Giới thiệu
@@ -704,8 +704,8 @@ Trong lần chạy này, Rally đã ngừng tạo load sau 1410 vòng lặp. Tuy
 
 Trên đây, chúng ta đã tìm hiểu khá nhiều về Rally. Tuy nhiên, chúng ta mới chỉ sử dụng một vài plugin đơn giản để phục vụ cho mục đích tìm hiểu Rally. Tiếp theo, chúng ta sẽ khám phá nhiều hơn nữa các plugin trong Rally.
 
-<a name='step8'></a>
-### 3.8. Verifying cloud via Template verifier
+<a name='step7'></a>
+### 3.7. Discovering more plugins in Rally
 Hiên nay, Rally hỗ trợ một tập hợp rất đa dạng các plugin mà sử dụng API của các project Openstack khác nhau như **Keystone**, **Nova**, **Cinder**, **Glance**,... Hơn nữa, bạn có thể kết hợp nhiều plugin trong một task để kiểm thử cloud của bạn một cách toàn diện.
 
 Để thấy được danh sách các plugin có sẵn trong Rally. Chúng ta có thể sử dụng câu lệnh sau để list ra danh sách các plugin và show chi tiết thông tin về chúng:
