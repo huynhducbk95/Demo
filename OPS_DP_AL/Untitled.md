@@ -1,0 +1,98 @@
+# Openstack Deployment Analysis
+## 1. Giới thiệu
+Trước khi đi vào tìm hiểu tài liệu này. Chúng ta sẽ nói qua về khai niệm của cloud computing và Openstack.
+
+Đối với Cloud computing, dịch theo định nghĩa của Viện tiêu chuẩn và công nghệ quốc gia của Mỹ ([NIST](https://csrc.nist.gov/publications/detail/sp/800-145/final)):
+```
+Cloud Computing là mô hình cho phép truy cập qua mạng để lựa chọn và sử dụng tài nguyên có thể được tính toán (ví dụ: mạng, máy chủ, lưu trữ, ứng dụng và dịch vụ) theo nhu cầu một cách thuận tiện và nhanh chóng; đồng thời cho phép kết thúc sử dụng dịch vụ, giải phóng tài nguyên dễ dàng, giảm thiểu các giao tiếp với nhà cung cấp.
+```
+
+Còn đối với Openstack, được định nghĩa theo trang chủ [openstack](https://www.openstack.org/) như sau:
+```
+OpenStack is a cloud operating system that controls large pools of compute, storage, and networking resources throughout a datacenter, all managed through a dashboard that gives administrators control while empowering their users to provision resources through a web interface.
+```
+
+Hiểu đơn giản như sau:
+```
+Openstack là một hệ thống quản lý cloud mà điều khiển một số lượng lớn các tài nguyên mạng, tài nguyên lưu trữ và tài nguyên tính toán thông qua một datacenter. Tất cả những tài nguyên này được quản lý thông qua bảng điều khiển giúp quản trị viên có thể kiểm soát toàn bộ hoạt động trong khi cung cấp cho người dùng quyền để cung cấp các tài nguyên thông qua một web interface.
+```
+
+Hiên nay, Openstack đang tiếp tục có được sức hút khá lớn trong công nghiệp bởi vì sự phát triền ngày càng nhanh về tầm ảnh hưởng của cloud computing và tính mềm dẻo của các dịch vụ Openstack như là một sản phẩm mã nguồn mở có thể được triển khai trong môi trường doanh nghiệp. Tài liệu này sẽ mô tả reference architecture (RA - kiến trúc tham khảo) cho việc triển khai nền tảng Openstack trong công nghiệp. Một giải pháp quản lý cloud thông minh và chi phí thấp nhưng đạt được những yêu cầu cao về tính **automation**, **metering** và **security**. Ngoài ra, kiến trúc này còn có khả năng **scalable**, **highly available** cho việc quản lý các hoạt động cloud được áp dụng.
+
+Tài liệu này sẽ đề cập đến các nội dung sau:
+-
+
+
+## 2. Vì sao lựa chọn Openstack
+Openstack đang trở thành một sự lựa chọn tốt nhất cho các doanh nghiệp vì những lợi ích mà nói mang đến. Vậy những lợi ích là gì? Vì sao Openstack được lựa chọn để triển khai trong công nghiệp?
+
+Dưới đây là những lý do giải thích cho câu hỏi trên:
+- Openstack là một sản phẩm mã nguồn mở, có tính mềm dẻo trong triển khai, giá thành thấp và có tính mở phù hợp với nhu cầu triển khai của từng doanh nghiệp. Cụ thể là có thể thêm node để tăng khả năng sử lý, có khả năng phân vùng để tách biệt các project với nhau, có khả năng high availability,...
+- History and vision: Openstack là một project mã nguồn mở phát triển nhanh nhất trong lịch sử, đến nay đã có 20 triệu dòng code được Openstack Foundation thông qua. Openstack hiện tại có hơn 34.000 contributor và hơn 550 công ty trực tiếp làm việc với Openstack, các công ty này đều là thành viên của Openstack Foudation.
+- Openstack được cấp dưới giấy phép Apache, liên tục được đổi mới với các phiên bản mới. Định kỳ 6 tháng sẽ đưa ra một phiên bản mới với các thay đổi phù hợp hơn với xu hướng công nghệ.
+- Hệ thống tài liệu của Openstack được thực hiện rất đầy đủ và chi tiết từ cơ bản đến nâng cao. Được triển khai với các nền tảng khác nhau (Ubuntu, Centos, RedHat,...) và với các mô hình khác nhau. Ngoài ra các tài liệu về các mô hình nâng cao cũng rất đầy đủ, chẳng hạn như Security, High Availability,....
+- Có rất nhiều công ty lớn đã và đang triển khai Openstack như Rackspace, Red Hat, IBM, Cisco,...
+
+## 3. Yêu cầu chức năng và phi chức năng
+Để có được một Openstack deployment mạnh mẽ, có thể đáp ứng được các nhu cầu doanh nghiệp thì chúng ta cần đảm bảo được các yêu cầu về chức năng và phi chức năng sau.
+
+#### 3.1. Yêu cầu chức năng
+Bảng sau liệt kê các yêu cầu chức năng:
+
+| Requirement        | Description           | Supported By  |
+| ------------- |:-------------| :-----|
+| Mobility     | khối lượng công việc không nằm trên bất kỳ một node nào | <ul><li>Cho phép các virtual machine được boot từ các storage phân tán</li><li>Di chuyển trực tiếp VM trong khi VM đang chạy</li><li>Chế độ rescue hỗ trợ bảo trì các server</li></ul> |
+| Resource provisioning     | Virtual machine, virtual storage, virtual network có thể được tạo ra theo yêu cầu      |   <ul><li>OpenStack compute service</li><li>OpenStack block storage service</li><li>OpenStack network service</li><li>OpenStack bare-metal provisioning service</li></ul> |
+| Management portal | Cung cấp một web-base cho việc quản lý các hoạt động trên cloud |  OpenStack dashboard (Horizon) |
+| Multi-tenancy | Các tài nguyên được phân chia theo từng tenant (project) | Built-in segmentation và multi-tenancy trong OpenStack |
+| Metering| Collect measurements of used resources to allow billing| OpenStack metering service (Ceilometer) |
+
+#### 3.2. Yêu cầu phi chức năng
+Bảng sau liệt kê các yêu cầu phi chức năng:
+
+| Requirement | Description | Supported By |
+| ----------- | ----------- | ------------ |
+| Scalability | Các thành phần có thể được scale theo nhu cầu| Các node compute và node storage có thể được scale độc lập mà không ảnh hưởng đến toàn hệ thống |
+| Load Balancing | Công việc được phân tán trên toàn bộ server | <ul><li>Network interfaces are teamed and load balanced</li><li>Sử dụng Openstack Scheduler để cân bằng các tài nguyên compute và storage trên các node</li><li>Các khối dữ liệu được phân tán trên các node storage và có thể được cân bằng lại khi có một node bị lỗi</li></ul>|
+| High availability| Một thành phần đơn lẻ bị lỗi không dẫn đến toàn bộ hệ thống ngừng hoạt động| <ul><li>Kiến trúc phần cứng đảm bảo rằng compute service, storage service và network service được tự động chuyển đến các thành phần còn lại không bị lỗi</li><li>Node controller, node compute và storage node là dừ thừa cho mục đích xử lý lỗi khi một node bị lỗi</li><li>Data được lưu trữ trên nhiều server và có khả năng truy cập được từ bất kỳ node nào; Do đó, không có single server failure dẫn đến mất dữ liệu</li><li>Các virtual machine được duy trì trên storage service được chia sẻ trên các server</li></ul>|
+| Mobility | Các VM có thể được di chuyển đến server vật lý khác nhau| <ul><li>VM migration</li><li>VM evacuation</li></ul>|
+| Ease of installation | Hạn chế sự phức tạp trong triển khai hệ thống | Sử dụng Ansible 2.0 |
+| High Performance | Cấu hình phù hợp với phần cứng | <ul><li>Sử dụng performance documentation của Openstack official để tối ưu và cải thiện hiệu năng</li><li>Tối ưu hóa phần cứng</li></ul> |
+
+## 4. Kiến trúc tổng quát
+
+Với những yêu cầu chức năng và phi chức năng trên
+Bảng sau sẽ liệt kê các core component của Openstack Platform được thể hiện ở hình trên.
+
+| Component  |  Code name |  Description |
+|------------|------------|--------------|
+| Compute service  | Nova  | <ul><li>Quản lí các máy ảo trong môi trường OpenStack, chịu trách nhiệm khởi tạo, lập lịch, ngừng hoạt động của các máy ảo theo yêu cầu. Starting, resizing, stopping và querying máy ảo</li><li>Gán và remove public IP</li><li>Attach và detach block storage</li><li>Show instance consoles (VNC)</li><li>Snapshot running instances</li><li>Nova hỗ trợ nhiều hypervisor: KVM, VMware, Xen, Docker, etc</li></ul>   |
+| Block storage service | Cinder |<ul><li>Cung cấp các khối lưu trữ bền vững (volume) để chạy các máy ảo (instances).</li><li>Kiến trúc pluggable driver cho phép kết nối với công nghệ Storage của các hãng khác.</li><li>Có thể attach và detach một volume từ máy ảo này gắn sang máy ảo khác, khởi tạo instance mới</li><li>Có thể sao lưu, mở rộng các volume</li></ul>|
+| Network service  | Neutron |<ul><li>Các phiên bản trước Grizzly tên là Quantum, sau đổi tên thành Neutron</li><li>Cung cấp kết nối mạng như một dịch vụ (Network-Connectivity-as-a-Service) cho các dịch vụ khác của OpenStack, thay thế cho nova-network.</li><li>Cung cấp API cho người dùng để họ tạo các network của riêng mình và attach vào server interfaces.</li><li>Kiến trúc pluggable hỗ trợ các công nghệ khác nhau của các nhà cung cấp networking phổ biến.</li><li>Ngoài ra nó cũng cung cấp thêm các dịch vụ mạng khác như: FWaaS (Firewall as a service), LBaaS (Load balancing as a servie), VPNaaS (VPN as a service),...</li></ul>|
+| Image Service | Glance | Lưu trữ và truy xuất các disk images của các máy ảo của người dùng và các cloud services khác. OpenStack compute sẽ sử dụng chúng trong suốt quá trình dự phòng instances. Các tính năng chính:<ul><li>Người quản trị tạo sẵn template để user có thể tạo máy ảo nhanh chóng</li><li>Người dùng có thể tạo máy ảo từ ổ đĩa ảo có sẵn. Glance chuyển images tới Nova để vận hành instance</li><li>Snapshot từ các instance đang chạy có thể được lưu trữ, vì vậy máy ảo đó có thể được back up.</li></ul>|
+| Identity service | Keystone | Cung cấp dịch vụ xác thực và ủy quyền cho các dịch vụ khác của OpenStack, cung cấp danh mục của các endpoints cho tất các dịch vụ trong OpenStack. Cụ thể hơn:<ul><li>Xác thực user và vấn đề token để truy cập vào các dịch vụ</li><li>Lưu trữ user và các tenant cho vai trò kiểm soát truy cập(cơ chế role-based access control - RBAC)</li><li>Cung cấp catalog của các dịch vụ (và các API enpoints của chúng) trên cloud</li><li>Tạo các policy giữa user và dịch vụ</li><li>Mỗi chức năng của Keystone có kiến trúc pluggable backend cho phép hỗ trợ kết hợp với LDAP, PAM, SQL</li></ul>|
+| Telemetry service | Ceilometer | <ul><li>Giám sát và đo đạc các thông số của OpenStack, thống kê tài nguyên của người sử dụng cloud phục vụ mục đích billing, benmarking, thống kê và mở rộng hệ thống</li><li>Đáp ứng tính năng "Pay as you go" của Cloud Computing</li></ul>|
+
+Những thành phần chính này sẽ tạo nên một nền tảng Openstack . Tuy nhiên, để một Openstack platform có thể đáp ứng được nhu cầu của doanh nghiệp, cụ thể là phục vụ cho một số lượng lớn các khách hàng, thì mô hình trên cần được trên cần được triển khai có khả năng scale.
+
+Để có được khả năng scale, phần dưới đây sẽ đi vào từng thành phần được xây dựng để chịu được nhu cầu người dùng thay đổi.
+
+## 5. Third-party component
+Ngoài các thành phần chính trong Openstack Platform, chúng ta còn sử dụng các thành phần sau với những mục đích cụ thể sau:
+- MariaDB: Là một phần mềm database mã nguồn mở. MariaDB cluster là một cụm các server được đồng bộ cho mariaDB. Nó sử dụng nhân bản các sao chép giữa mỗi server trong cluster để đạt được một mô hình active-avtice multi-master. Điều này có nghĩa là, mỗi server có thể cho phép dữ liệu đến và lưu trữ nó, đồng thời một node bị lỗi thì không ảnh hưởng đến cluster.
+- RabbitMQ: Là một hệ thống truyền thông điệp mã nguồn mở, mà dựa trên chuẩn AMQP. RabbitMQ là broker mặc địch và được yêu cầu sử dụng trong nền tảng Openstack.
+
+## 6. Compute pool
+Compute pool là khái niệm dùng để nói đến một tập hợp lớn các node compute được ảo hóa bởi Openstack Nova để cung cấp một môi trường để deploy và chạy các virtual machine (viết tắt là VM) . Mỗi lần chúng ta chạy một VM, tất cả các tài nguyên tính toán được liên kết với VM (vCPUs,RAM,HDD,...) đều được tiêu thụ từ node compute. Do đó, số lương node compute cần đạt được tính flexible (tính mềm dẻo) để có thể phục vụ cho nhu cầu của doanh nghiệp ngày càng tăng.
+
+Mô hình triển khai trong bài này đạt được chứng minh rằng, nó có thể được triển khai với số lượng node compute lên đến 1000 node. Phần triển khai trên 1000 node compute sẽ được nói đến ở phần sau.
+
+## 7. Controller cluster
+
+Openstack controller node là các server trung tâm cho việc quản lý Cloud platform. Controller node là nơi mà người dùng có thể truy cập đến và tạo ra các tài nguyên dựa trên cloud cho từng mục đích sử dụng của họ.
+
+[image]
+
+Để đạt được một Openstack Platform mạnh mẽ, các service trong Openstack Controller node cần được triển khai theo mô hình High Availability (HA). Có 3 kiểu dịch vụ được triển khai trên HA node là: *core*, *active-passive*, *systemd*. Các core service và active-passive service cần được chạy và được quản lý bởi **Pacemaker**, và tất cả các service khác được quản lý bởi **systemd**. Một số lượng lẻ các node controller sẽ được sử dụng để triển khai (tối thiểu là 3 node), bởi vì khả năng HA có được là dựa trên một quorum cùng với 2 công nghệ là Pacemaker và HAProxy. HAProxy được cấu hình trên các node controller sử dụng Linux để triển khai nhiều hơn một node controller. Pacemaker được sử dụng để đảm bảo rằng tài nguyên của cluster luôn luôn sẵn sàng. Nếu một node hoặc là một service bị lỗi, Pacemaker sẽ có thể restart service đó, hoặc là loại bỏ node đó ra khỏi cluster hoặc là reboot node đó thông qua HAProxy. Đối với mô hình 3 node controller, nếu 2 node bị lỗi, thì node còn lại sẽ đóng vai trò chính trong các hoạt động của node controller.
+
+
