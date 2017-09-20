@@ -197,3 +197,38 @@ Các thành phần trong Networking của OpenStack:
 **Neutron metadata agent**: cung cấp metadata về network cho các máy ảo.
 
 **Service placement**: ta cũng cần tách network ra cài đặt trên tối thiểu trên 2 node riêng biệt để đảm bảo hiệu suất và tính sẵn có cao nhất.
+
+#### **5. Database/Galera**
+Database trong Openstack bao gồm tất cả dữ liệu mô tả trạng thái hiện tại của cloud. Tất cả các thành phần của OpenStack sử dụng database để đọc và lưu các thay đổi về trạng thái của chúng cũng như các thành phần data plane tương ứng. Do vậy cần có cách thiết kế tổ chức database để đảm bảo tính tin cậy, khả năng chịu lỗi và tính sẵn sàng cao.
+    
+Để làm được điều này, ta đặt các instance của dịch vụ database trên mỗi node riêng biệt và sử dụng Galera cluster để replicate dữ liệu giữa chúng. Galera Cluster là một giải pháp mutil master cho database. Sử dụng galera cluster, ứng dụng có thể read/write trên bất kì node nào. Một node có thể được thêm vào cluster cũng như gỡ ra khỏi cluster mà không downtime dịch vụ cũng như mất dữ liệu.
+    
+Phụ thuộc loại database bạn muốn sử dụng, có thể có các cách implement Galera cluster sau:
+
+ - Galera Cluster for MySQL
+ - MariaDB Galera Cluster
+ - Percona XtraDB Cluster
+ 
+Ngoài ra, cân bằng tải( load balancer) cũng cần được cấu hình với Galera Cluster. Load balancer sẽ điều phối cluster, chuyển hướng các write request tới instance phù hợp. 
+
+#### **6. Ceph Distributed Storage**
+#### Summary
+ Ceph là giải pháp mã nguồn mở để xây dựng hệ thống lưu trữ dữ liệu phân tán với khả năng replication. Ceph cung cấp giải pháp lưu trữ theo đối tượng (Object), khối (Block) và tệp dữ liệu (File) trong một nền tảng đơn nhất. Object API và Block Device API được Ceph sử dụng trong dịch vụ Glance và Cinder của Openstack. 
+ 
+Các thành phần chính của Ceph:
+
+ - Ceph monitor: chịu trách nhiệm giám sát tình trạng của toàn bộ cluster. Chúng lưu trữ các thông tin quan trọng của cluster, trạng thái của các node và thông tin cấu hình cluster. Các thông tin này được lưu trong cluster map, bao gồm monitor, OSD, PG, CRUSH và MDS map.
+ - Ceph OSD: lưu trữ actual data trong các ổ đĩa vật lí trên mỗi node của cluster dưới dạng các object. Phần lớn các công việc bên trọng Cẹph cluster được thực hiện bới Ceph OSD daemon.
+ - RADOS Gateway: cung cấp các API sử dụng RESTful gateway tới Ceph Storage Cluster. Các API này tương thích với Openstack Object Storage API, cho phép sử dụng Ceph như Glance back-end trong Openstack.
+
+#### Ceph Monitor
+Để đảm bảo tính tin cậy, Ceph Monitor nên được đặt trên nhiều node vật lí khác nhau. Các node này có thể là các node Storage, tuy nhiên nó không được khuyến nghị. Để đảm bảo tính sẵn sàng cao,  sử dụng 3 instance của Ceph Monitor trên mỗi node là được recommend.
+    
+#### Ceph OSD
+Mỗi node storage cần một instance của Ceph OSD daemon. Vì một node storage thường có nhiều hơn 1 ổ đĩa, nên sẽ có nhiều hơn 1 tiến trình OSD chạy trên node đó.  Do vậy, recommend không đặt các service khác trên các node OSD này.
+    
+#### RADOS Gateway
+Dịch vụ này cung cấp Object API thông qua HTTP.  Nó sử dụng ít tài nguyên nên có thể được đặt cùng các service khác. Mutilple radosgw daemon nên được sử dụng để đảm bảo tính sẵn sàng cao. Ngoài ra, cân bằng tải nên được đặt trước các instance của radosgw để phân phối tải và chống chịu lỗi.
+    
+#### Services Placement
+Ceph có khả năng mở rộng tốt bằng cách thêm các node OSD. Ceph Monitor yêu cầu 1 node / 1 instance với tổng số node là 3. Rados Gateway được đặt trên cùng node với Monitor.
