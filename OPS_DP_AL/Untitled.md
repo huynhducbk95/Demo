@@ -1,54 +1,28 @@
 # Openstack Deployment Documentation
 
 # Table Of Contents
-- [Chương 1: Giới thiệu](#introduction)
-  - [1.1. IT automation](#itautomation)
-  - [1.2. Ansible là gì?](#whatisansible)
-  - [1.3. Kiến trúc của Ansible](#ansiblearchitecture)
-  - [1.4. Cài đặt Ansible](#ansibleinstallation)
-  - [1.5. Cấu hình Ansible](#ansibleconfiguration)
-   - [1.5.1. Cấu hình qua biến môi trường](#variableEvn)
-   - [1.5.2. Cấu hình qua file cấu hình](#configurationfile)
-- [Chương 2: Cơ bản về Ansible](#ansiblebasic)
- - [2.1. YAML](#yaml)
- - [2.2. Hello Ansible](#helloansible)
-- [Chương 3: Playbook](#playbook)
- - [3.1. Một playbook cơ bản](#basicplaybook)
- - [3.2. Tạo user bằng Ansible](#createuseransible)
- - [3.3. Jinja2 template](#jinja2template)
- - [3.4. Cấu hình web server](#webserverconfiguration)
-- [Chương 4: Quản lý multiple host với Ansible](#multihostmanage)
- - [4.1. Inventory file](#inventoryfile)
- - [4.2. Variables](#variables)
- - [4.3. Vòng lặp trong Ansible](#ansibleloop)
-- [Chương 5: Ansible trong các triển khai phức tạp](#complexdeployment)
- - [5.1. local_action](#localaction)
- - [5.2. delegate_to](#delegateto)
- - [5.3. Conditional](#conditional)
- - [5.4. Boolean conditional](#Booleanconditional)
- - [5.5. Include](#include)
- - [5.6. Handler](#handler)
-- [Chương 6: Role](#role)
- - [6.1. Tổ chức một project](#projectstructure)
- - [6.2. Role](#roledetail)- []
+[TODO]
 
 ## 1. Giới thiệu
 Trước khi đi vào tìm hiểu tài liệu này. Chúng ta sẽ nói qua về khai niệm của cloud computing và Openstack.
 
 Đối với Cloud computing, dịch theo định nghĩa của Viện tiêu chuẩn và công nghệ quốc gia của Mỹ ([NIST](https://csrc.nist.gov/publications/detail/sp/800-145/final)):
-```
+
+`
 Cloud Computing là mô hình cho phép truy cập qua mạng để lựa chọn và sử dụng tài nguyên có thể được tính toán (ví dụ: mạng, máy chủ, lưu trữ, ứng dụng và dịch vụ) theo nhu cầu một cách thuận tiện và nhanh chóng; đồng thời cho phép kết thúc sử dụng dịch vụ, giải phóng tài nguyên dễ dàng, giảm thiểu các giao tiếp với nhà cung cấp.
-```
+`
 
 Còn đối với Openstack, được định nghĩa theo trang chủ [openstack](https://www.openstack.org/) như sau:
-```
+
+`
 OpenStack is a cloud operating system that controls large pools of compute, storage, and networking resources throughout a datacenter, all managed through a dashboard that gives administrators control while empowering their users to provision resources through a web interface.
-```
+`
 
 Hiểu đơn giản như sau:
-```
+
+`
 Openstack là một hệ thống quản lý cloud mà điều khiển một số lượng lớn các tài nguyên mạng, tài nguyên lưu trữ và tài nguyên tính toán thông qua một datacenter. Tất cả những tài nguyên này được quản lý thông qua bảng điều khiển giúp quản trị viên có thể kiểm soát toàn bộ hoạt động trong khi cung cấp cho người dùng quyền để cung cấp các tài nguyên thông qua một web interface.
-```
+`
 
 Hiên nay, Openstack đang tiếp tục có được sức hút khá lớn trong công nghiệp bởi vì sự phát triền ngày càng nhanh về tầm ảnh hưởng của cloud computing và tính mềm dẻo của các dịch vụ Openstack như là một sản phẩm mã nguồn mở có thể được triển khai trong môi trường doanh nghiệp. Tài liệu này sẽ mô tả reference architecture (RA - kiến trúc tham khảo) cho việc triển khai nền tảng Openstack trong công nghiệp. Một giải pháp quản lý cloud thông minh và chi phí thấp nhưng đạt được những yêu cầu cao về tính **automation**, **metering** và **security**. Ngoài ra, kiến trúc này còn có khả năng **scalable**, **highly available** cho việc quản lý các hoạt động cloud được áp dụng.
 
@@ -93,9 +67,11 @@ Bảng sau liệt kê các yêu cầu phi chức năng:
 
 ## 4. Kiến trúc tổng quát
 Dưới đây là kiến trúc tổng quát của Openstack được triển khai trong môi trường doanh nghiệp của Econet:
+
 ![](./images/overview_architecture.jpg)
 
 Tiếp theo là kiến trúc logic cho mô hình 4 side triển 4 cụm Openstack:
+
 ![](./images/four_side_architecture.jpg)
 
 Bảng sau sẽ liệt kê các thành phần chính của Openstack Platform được thể hiện ở hình trên.
