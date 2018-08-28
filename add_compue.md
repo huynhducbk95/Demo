@@ -1,7 +1,7 @@
 
-# Add compute nodes: 11, 12
+# Thêm node compute11 và compute12 vào cluster tầng 6
 
-## Port on switches
+## I. Port on switches
 
 ```bash
 10.240.172.144 - ens0f1 - Test by asign an IP
@@ -23,7 +23,8 @@ và ngược lại ens0f1 trên SW 144
   - Init tất cả VLAN đang có trên SW 133 cho SW 144
 
 
-## Add compute steps
+## II. Các bước thực hiện thêm 2 node compute
+Các bước thực hiện trên 2 node tương tự nhau. Phần này thực hiện cài đặt và cấu hình trên node **compute12** với ip là `10.240.193.12`
 ### 1. Install OS 7
 - Mount ổ đĩa với file .iso
 - Thay đổi boot option đến ổ đĩa vừa được mount.
@@ -190,7 +191,7 @@ cfffefa623d9: Pull complete
 Digest: sha256:34d9d683086d7f3b9bbdab0d1df4518b230448896fa823f7a6cf75f66d64ebe1
 Status: Downloaded newer image for 10.240.193.23:5555/cloud_lab/cadvisor:v0.28.3
 ```
-## Cấu hình kolla-ansible và triển khai
+## III. Cấu hình kolla-ansible và triển khai
 Truy cập vào **controller23** để thay đổi cấu hình kolla-ansible và thực hiện triển khai. 
 - cd vào thư mục `kolla-deployment`.
 - Thêm 2 compute host là `compute11` và `compute12`vào section `[external-compute]` trong file ``:
