@@ -1,5 +1,5 @@
 
-# Thêm node compute11 và compute12 vào cluster tầng 6
+# Thêm 2 host compute11 và compute12 vào cluster tầng 6
 
 ## I. Port on switches
 
@@ -23,8 +23,8 @@ và ngược lại ens0f1 trên SW 144
   - Init tất cả VLAN đang có trên SW 133 cho SW 144
 
 
-## II. Các bước thực hiện thêm 2 node compute
-Các bước thực hiện trên 2 node tương tự nhau. Phần này thực hiện cài đặt và cấu hình trên node **compute12** với ip là `10.240.193.12`
+## II. Các bước thực hiện thêm 2 compute host
+Các bước thực hiện trên 2 host tương tự nhau. Phần này thực hiện cài đặt và cấu hình trên host **compute12** với ip là `10.240.193.12`
 ### 1. Install OS 7
 - Mount ổ đĩa với file .iso
 - Thay đổi boot option đến ổ đĩa vừa được mount.
@@ -139,7 +139,7 @@ default via 10.240.193.1 dev ens3f0.193
 ...
 ```
 ### 3. Thiết lập local repo và cài đặt Docker.
-- Truy cập vào một node compute khác (ví dụ compute16 ), copy 2 file là `ceph.repo` và `local.repo` trong thư mục `/etc/yum.repos.d` từ **comput16** sang **compute12**.
+- Truy cập vào một compute hkhác (ví dụ compute16 ), copy 2 file là `ceph.repo` và `local.repo` trong thư mục `/etc/yum.repos.d` từ **comput16** sang **compute12**.
 - Cập nhật repo:
 ```
 # yum update
@@ -212,4 +212,4 @@ compute20
 ```bash
 ./kolla-ansible -i /root/kolla-deployment/multinode deploy --tags=ceilometer,nova,neutron,openvswitch,ovs-dpdk
 ```
-- Kết thúc quá trình deploy, 2 node `compute11` và `compute12` sẽ được thêm vào cluster. Thực hiện tạo instance và kiểm tra kết nối để đảm bảo quá trình deploy thành công.
+- Kết thúc quá trình deploy, 2 host `compute11` và `compute12` sẽ được thêm vào cluster. Thực hiện tạo instance và kiểm tra kết nối để đảm bảo quá trình deploy thành công.
