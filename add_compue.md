@@ -91,7 +91,7 @@ NM_CONTROLLED=no
 IPADDR=10.240.194.12
 PREFIX=24
 ```
-- Tiếp theo, tạo NIC ảo là **bond0** và thiết lập bonding đến NIC **ens3f1** bằng cách thêm file `ifcfg-bond0` với nội dung như sau:
+- Tiếp theo, tạo NIC ảo là **bond0** và thiết lập primary interface là **ens3f1**, thêm file `ifcfg-bond0` với nội dung như sau:
 ```
 NAME=bond0
 DEVICE=bond0
